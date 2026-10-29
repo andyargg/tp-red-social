@@ -29,6 +29,18 @@ npm install
 npm start              # http://localhost:4200
 ```
 
+## Usuario administrador
+
+Por defecto todo usuario nuevo tiene perfil `usuario`. Para tener un administrador, desde `backend/` (usa la base configurada en `.env`):
+
+```bash
+# convertir en administrador a un usuario que ya existe
+npm run crear-admin -- <nombre de usuario o correo>
+
+# crear un administrador nuevo
+npm run crear-admin -- --nombre Ana --apellido García --correo ana@mail.com   --usuario ana.admin --password Admin1234 --nacimiento 1995-04-20
+```
+
 ## Deploy
 
 - **Frontend:** cada push a `main` que toca `frontend/` lo compila y publica en GitHub Pages (`.github/workflows/deploy-frontend.yml`).

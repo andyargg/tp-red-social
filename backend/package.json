@@ -14,6 +14,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "crear-admin": "nest build && node dist/crear-admin.js",
     "lint": "oxlint --type-aware src/ test/",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",

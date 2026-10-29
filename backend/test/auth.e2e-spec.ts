@@ -4,7 +4,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.js';
 import { configurarApp } from '../src/configurar-app.js';
+import { AuthService } from '../src/auth/auth.service.js';
+import { RegistroDto } from '../src/auth/dto/registro.dto.js';
 import { ImagenesService } from '../src/imagenes/imagenes.service.js';
+import { UsuariosService } from '../src/usuarios/usuarios.service.js';
 
 // PNG de 1x1 para probar la subida de la imagen de perfil
 const PNG = Buffer.from(
@@ -127,6 +130,20 @@ describe('Auth (e2e)', () => {
       );
     });
 
+    it('informa un solo error en español por cada campo inválido', async () => {
+      const { apellido: _, ...sinApellido } = datosValidos;
+      const res = await registrar(app, {
+        ...sinApellido,
+        correo: 'e@mail.com',
+        nombreUsuario: 'emilia',
+        nombre: 'x'.repeat(60),
+      }).expect(400);
+      expect(res.body.message).toEqual([
+        'El nombre puede tener hasta 50 caracteres',
+        'El apellido es obligatorio',
+      ]);
+    });
+
     it('ignora un perfil "administrador" enviado en el registro', async () => {
       const res = await registrar(app, {
         ...datosValidos,
@@ -194,6 +211,46 @@ describe('Auth (e2e)', () => {
         .post('/api/auth/login')
         .send({})
         .expect(400);
+    });
+  });
+
+  describe('perfil administrador (script crear-admin)', () => {
+    it('convierte en administrador a un usuario existente por nombre de usuario o correo', async () => {
+      const usuarios = app.get(UsuariosService);
+      const actualizado = await usuarios.cambiarPerfil(
+        ' ANA@mail.com ',
+        'administrador',
+      );
+      expect(actualizado?.perfil).toBe('administrador');
+
+      const res = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ usuario: 'ana.garcia', password: 'Secreta123' })
+        .expect(200);
+      expect(res.body.usuario.perfil).toBe('administrador');
+    });
+
+    it('devuelve null si el usuario no existe', async () => {
+      expect(
+        await app.get(UsuariosService).cambiarPerfil('nadie', 'administrador'),
+      ).toBeNull();
+    });
+
+    it('crea un administrador nuevo con la contraseña encriptada', async () => {
+      const dto = Object.assign(new RegistroDto(), {
+        ...datosValidos,
+        correo: 'admin@mail.com',
+        nombreUsuario: 'admin',
+      });
+      const { usuario } = await app
+        .get(AuthService)
+        .registro(dto, undefined, 'administrador');
+      expect(usuario.perfil).toBe('administrador');
+
+      await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ usuario: 'admin', password: 'Secreta123' })
+        .expect(200);
     });
   });
 });

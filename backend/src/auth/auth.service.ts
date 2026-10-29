@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
 import { ImagenesService } from '../imagenes/imagenes.service.js';
-import { UsuarioDocument } from '../usuarios/usuario.schema.js';
+import { Perfil, UsuarioDocument } from '../usuarios/usuario.schema.js';
 import { UsuariosService } from '../usuarios/usuarios.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegistroDto } from './dto/registro.dto.js';
@@ -22,7 +22,12 @@ export class AuthService {
     private readonly imagenes: ImagenesService,
   ) {}
 
-  async registro(dto: RegistroDto, imagen?: Express.Multer.File) {
+  // la ruta pública nunca pasa "perfil": solo el script crear-admin (y el sprint 4) crean administradores
+  async registro(
+    dto: RegistroDto,
+    imagen?: Express.Multer.File,
+    perfil: Perfil = 'usuario',
+  ) {
     if (await this.usuarios.existeCorreo(dto.correo)) {
       throw new ConflictException('Ya existe una cuenta con ese correo');
     }
@@ -34,7 +39,6 @@ export class AuthService {
       ? await this.imagenes.subir(imagen, 'perfiles')
       : null;
 
-    // acá el perfil siempre es "usuario": solo un administrador puede crear otro tipo
     const usuario = await this.usuarios.crear({
       nombre: dto.nombre,
       apellido: dto.apellido,
@@ -44,7 +48,7 @@ export class AuthService {
       fechaNacimiento: new Date(dto.fechaNacimiento),
       descripcion: dto.descripcion ?? '',
       imagenPerfil,
-      perfil: 'usuario',
+      perfil,
     });
     return this.sesion(usuario);
   }

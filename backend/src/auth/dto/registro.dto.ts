@@ -9,15 +9,17 @@ import {
 } from 'class-validator';
 import { PASSWORD_REGEX, PASSWORD_MENSAJE } from './password.js';
 
+// con stopAtFirstError se informa un solo error por campo, y class-validator evalúa
+// primero el decorador de más abajo: por eso "obligatorio" va al final
 export class RegistroDto {
-  @IsString()
-  @IsNotEmpty({ message: 'El nombre es obligatorio' })
   @MaxLength(50, { message: 'El nombre puede tener hasta 50 caracteres' })
+  @IsString({ message: 'El nombre es obligatorio' })
+  @IsNotEmpty({ message: 'El nombre es obligatorio' })
   nombre: string;
 
-  @IsString()
-  @IsNotEmpty({ message: 'El apellido es obligatorio' })
   @MaxLength(50, { message: 'El apellido puede tener hasta 50 caracteres' })
+  @IsString({ message: 'El apellido es obligatorio' })
+  @IsNotEmpty({ message: 'El apellido es obligatorio' })
   apellido: string;
 
   @IsEmail({}, { message: 'El correo no es válido' })
@@ -36,9 +38,9 @@ export class RegistroDto {
   fechaNacimiento: string;
 
   @IsOptional()
-  @IsString()
   @MaxLength(200, {
     message: 'La descripción puede tener hasta 200 caracteres',
   })
+  @IsString({ message: 'La descripción debe ser un texto' })
   descripcion?: string;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Usuario, UsuarioDocument } from './usuario.schema.js';
+import { Perfil, Usuario, UsuarioDocument } from './usuario.schema.js';
 
 @Injectable()
 export class UsuariosService {
@@ -23,9 +23,22 @@ export class UsuariosService {
 
   // el login acepta el correo o el nombre de usuario en el mismo campo
   buscarParaLogin(identificador: string) {
-    const valor = identificador.toLowerCase();
     return this.usuarios
-      .findOne({ $or: [{ correo: valor }, { nombreUsuario: valor }] })
+      .findOne(porIdentificador(identificador))
       .select('+password');
   }
+
+  // devuelve el usuario actualizado, o null si no existe
+  cambiarPerfil(identificador: string, perfil: Perfil) {
+    return this.usuarios.findOneAndUpdate(
+      porIdentificador(identificador),
+      { perfil },
+      { returnDocument: 'after' },
+    );
+  }
+}
+
+function porIdentificador(identificador: string) {
+  const valor = identificador.trim().toLowerCase();
+  return { $or: [{ correo: valor }, { nombreUsuario: valor }] };
 }
