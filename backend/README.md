@@ -11,7 +11,7 @@ Copiar `.env.example` a `.env`:
 | `PORT` | Puerto del servidor (por defecto 3000) |
 | `MONGODB_URI` | Conexión a MongoDB (por ejemplo, MongoDB Atlas) |
 | `JWT_SECRET` | Secreto para firmar los tokens |
-| `PUBLIC_URL` | URL pública del backend, para armar los links de las imágenes |
+| `CLOUDINARY_URL` | Credenciales de Cloudinary: `cloudinary://<api_key>:<api_secret>@<cloud_name>` |
 | `FRONTEND_URL` | Orígenes permitidos por CORS, separados por coma |
 
 ## Módulos
@@ -19,5 +19,4 @@ Copiar `.env.example` a `.env`:
 - `auth`: registro y login.
 - `usuarios`: modelo y acceso a los usuarios.
 - `publicaciones`: modelo de publicaciones (las rutas llegan en el sprint 2).
-
-Las imágenes subidas se guardan en `uploads/` y se sirven en `/uploads`.
+- `imagenes`: subida de imágenes a Cloudinary (carpeta `red-social/`).

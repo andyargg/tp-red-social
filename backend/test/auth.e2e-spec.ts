@@ -1,11 +1,10 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { rm } from 'node:fs/promises';
-import { join } from 'node:path';
 import request from 'supertest';
 import { AppModule } from '../src/app.module.js';
 import { configurarApp } from '../src/configurar-app.js';
+import { ImagenesService } from '../src/imagenes/imagenes.service.js';
 
 // PNG de 1x1 para probar la subida de la imagen de perfil
 const PNG = Buffer.from(
@@ -34,6 +33,15 @@ function registrar(
   return req;
 }
 
+// reemplaza a Cloudinary: los tests no suben nada ni necesitan credenciales
+const imagenesFalso = {
+  subidas: [] as { carpeta: string; tamanio: number }[],
+  async subir(archivo: Express.Multer.File, carpeta: string) {
+    this.subidas.push({ carpeta, tamanio: archivo.size });
+    return `https://res.cloudinary.com/test/image/upload/red-social/${carpeta}/foto.png`;
+  },
+};
+
 describe('Auth (e2e)', () => {
   let mongo: MongoMemoryServer;
   let app: NestExpressApplication;
@@ -42,11 +50,13 @@ describe('Auth (e2e)', () => {
     mongo = await MongoMemoryServer.create();
     process.env.MONGODB_URI = mongo.getUri();
     process.env.JWT_SECRET = 'secreto-de-test';
-    process.env.PUBLIC_URL = 'http://localhost:3000';
 
     const modulo = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(ImagenesService)
+      .useValue(imagenesFalso)
+      .compile();
     app = modulo.createNestApplication<NestExpressApplication>();
     configurarApp(app);
     await app.init();
@@ -55,10 +65,6 @@ describe('Auth (e2e)', () => {
   afterAll(async () => {
     await app?.close();
     await mongo?.stop();
-    await rm(join(process.cwd(), 'uploads', 'perfiles'), {
-      recursive: true,
-      force: true,
-    });
   });
 
   describe('POST /api/auth/registro', () => {
@@ -75,8 +81,22 @@ describe('Auth (e2e)', () => {
       });
       expect(res.body.usuario.password).toBeUndefined();
 
-      const url = new URL(res.body.usuario.imagenPerfil);
-      await request(app.getHttpServer()).get(url.pathname).expect(200);
+      expect(res.body.usuario.imagenPerfil).toBe(
+        'https://res.cloudinary.com/test/image/upload/red-social/perfiles/foto.png',
+      );
+      expect(imagenesFalso.subidas).toEqual([
+        { carpeta: 'perfiles', tamanio: PNG.length },
+      ]);
+    });
+
+    it('no sube la imagen si los datos son inválidos', async () => {
+      const antes = imagenesFalso.subidas.length;
+      await registrar(
+        app,
+        { ...datosValidos, correo: 'no-es-correo' },
+        PNG,
+      ).expect(400);
+      expect(imagenesFalso.subidas).toHaveLength(antes);
     });
 
     it('rechaza un correo repetido con 409', async () => {

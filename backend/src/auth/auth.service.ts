@@ -4,10 +4,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
-import { guardarImagen } from '../common/imagenes.js';
+import { ImagenesService } from '../imagenes/imagenes.service.js';
 import { UsuarioDocument } from '../usuarios/usuario.schema.js';
 import { UsuariosService } from '../usuarios/usuarios.service.js';
 import { LoginDto } from './dto/login.dto.js';
@@ -20,7 +19,7 @@ export class AuthService {
   constructor(
     private readonly usuarios: UsuariosService,
     private readonly jwt: JwtService,
-    private readonly config: ConfigService,
+    private readonly imagenes: ImagenesService,
   ) {}
 
   async registro(dto: RegistroDto, imagen?: Express.Multer.File) {
@@ -32,11 +31,7 @@ export class AuthService {
     }
 
     const imagenPerfil = imagen
-      ? await guardarImagen(
-          imagen,
-          'perfiles',
-          this.config.getOrThrow('PUBLIC_URL'),
-        )
+      ? await this.imagenes.subir(imagen, 'perfiles')
       : null;
 
     // acá el perfil siempre es "usuario": solo un administrador puede crear otro tipo

@@ -8,7 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { opcionesImagen } from '../common/imagenes.js';
+import { opcionesImagen } from '../imagenes/opciones-imagen.js';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegistroDto } from './dto/registro.dto.js';
