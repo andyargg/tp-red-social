@@ -1,0 +1,28 @@
+// estilos compartidos por login y registro
+.pantalla-auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4rem 1rem;
+  box-sizing: border-box;
+}
+.tarjeta-auth { width: 100%; max-width: 26rem; margin: 0; }
+.tarjeta-auth.ancha { max-width: 40rem; }
+
+.encabezado { text-align: center; margin-bottom: 1rem; }
+.encabezado h1 { margin: 0.75rem 0 0.25rem; }
+.encabezado p { margin: 0; }
+
+.campo-error { margin: 0.25rem 0 0; font-size: 14px; color: var(--danger); }
+.ayuda { margin: 0.25rem 0 0; font-size: 14px; }
+
+.con-boton { display: flex; gap: 0.5rem; align-items: stretch; }
+.con-boton input { margin-top: 0; }
+.con-boton button { padding: 0 0.75rem; }
+
+.enviar { width: 100%; justify-content: center; margin-top: 1.5rem; }
+.alternativa { text-align: center; margin: 1.25rem 0 0; font-size: 15px; }
+
+.grilla { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1rem; }
+@media (max-width: 600px) { .grilla { grid-template-columns: 1fr; } }

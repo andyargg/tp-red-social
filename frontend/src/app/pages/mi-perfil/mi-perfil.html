@@ -1,0 +1,63 @@
+<section class="perfil">
+  <header class="page-header">
+    <h1>Mi perfil</h1>
+  </header>
+
+  @if (auth.usuario(); as usuario) {
+    <div class="card hero">
+      <app-avatar
+        [nombre]="usuario.nombre + ' ' + usuario.apellido"
+        [imagen]="usuario.imagenPerfil"
+        tamanio="lg"
+      />
+      <div class="identidad">
+        <div class="nombre">
+          <h2>{{ usuario.nombre }} {{ usuario.apellido }}</h2>
+          <span class="badge" [class.badge-ok]="usuario.perfil === 'administrador'">
+            {{ usuario.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
+          </span>
+        </div>
+        <p class="meta">{{ '@' + usuario.nombreUsuario }}</p>
+        <p class="descripcion">
+          {{ usuario.descripcion || 'Todavía no agregaste una descripción.' }}
+        </p>
+      </div>
+    </div>
+
+    <div class="datos">
+      <div class="dato">
+        <span class="etiqueta"><app-icono nombre="correo" [tamanio]="13" />Correo</span>
+        <span>{{ usuario.correo }}</span>
+      </div>
+      <div class="dato">
+        <span class="etiqueta"><app-icono nombre="arroba" [tamanio]="13" />Usuario</span>
+        <span>{{ usuario.nombreUsuario }}</span>
+      </div>
+      <div class="dato">
+        <span class="etiqueta"><app-icono nombre="calendario" [tamanio]="13" />Nacimiento</span>
+        <span>{{ usuario.fechaNacimiento | date: 'longDate' : 'UTC' : 'es-AR' }}</span>
+      </div>
+      <div class="dato">
+        <span class="etiqueta"><app-icono nombre="usuario" [tamanio]="13" />Miembro desde</span>
+        <span>{{ usuario.createdAt | date: 'longDate' : undefined : 'es-AR' }}</span>
+      </div>
+    </div>
+
+    <h2>Mis publicaciones</h2>
+    <div class="card vacio">
+      <span class="icono-vacio"><app-icono nombre="bandeja" [tamanio]="20" /></span>
+      <strong>Todavía no publicaste nada</strong>
+      <p>Acá vas a ver tus últimas 3 publicaciones.</p>
+    </div>
+  } @else {
+    <div class="card vacio">
+      <span class="icono-vacio"><app-icono nombre="usuario" [tamanio]="20" /></span>
+      <strong>No ingresaste</strong>
+      <p>Ingresá para ver y editar tu perfil.</p>
+      <div class="acciones">
+        <a class="button" routerLink="/login">Ingresar</a>
+        <a class="button secondary" routerLink="/registro">Crear cuenta</a>
+      </div>
+    </div>
+  }
+</section>

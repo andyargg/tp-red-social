@@ -1,0 +1,36 @@
+.perfil { max-width: 48rem; margin: 0 auto; }
+
+.hero { display: flex; gap: 1.25rem; align-items: center; }
+.identidad { min-width: 0; }
+.nombre { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.nombre h2 { margin: 0; font-size: 22px; }
+.identidad p { margin: 0.25rem 0 0; }
+.descripcion { color: var(--text-primary); }
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.75rem;
+}
+.dato {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 1rem;
+  background: rgb(241 245 249 / 0.6);
+  border: 1px solid rgb(226 232 240 / 0.5);
+  border-radius: 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 600px) { .hero { flex-direction: column; text-align: center; } .nombre { justify-content: center; } }

@@ -67,7 +67,7 @@ input:not([type='hidden'], [type='radio'], [type='checkbox']), select, textarea 
 }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--cobalt); outline-offset: -1px; }
 
-button, a.button {
+button, .button {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -81,23 +81,23 @@ button, a.button {
   cursor: pointer;
   transition: background 150ms, border-color 150ms;
 }
-button:hover, a.button:hover { background: var(--primary-hover); }
+button:hover, .button:hover { background: var(--primary-hover); }
 button:disabled { opacity: 0.55; cursor: not-allowed; }
-button.secondary, a.button.secondary {
+button.secondary, .button.secondary {
   background: var(--bg-surface);
   border-color: var(--border);
   color: var(--text-primary);
 }
-button.secondary:hover, a.button.secondary:hover { background: var(--bg-subtle); }
-button.danger, a.button.danger {
+button.secondary:hover, .button.secondary:hover { background: var(--bg-subtle); }
+button.danger, .button.danger {
   background: var(--danger-bg);
   border-color: rgb(185 28 28 / 0.35);
   color: #991b1b;
 }
-button.danger:hover, a.button.danger:hover { background: #fee2e2; border-color: rgb(185 28 28 / 0.55); }
+button.danger:hover, .button.danger:hover { background: #fee2e2; border-color: rgb(185 28 28 / 0.55); }
 button.ghost-danger { background: transparent; border-color: var(--border); color: var(--text-secondary); }
 button.ghost-danger:hover { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger); }
-button.small, a.button.small { padding: 0.3rem 0.7rem; }
+button.small, .button.small { padding: 0.3rem 0.7rem; }
 
 .card {
   background: var(--card-gradient);

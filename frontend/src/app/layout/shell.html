@@ -1,0 +1,45 @@
+<div class="app">
+  <aside class="sidebar">
+    <a class="marca" routerLink="/publicaciones">
+      <img src="favicon.svg" alt="" width="28" height="28" />
+      Red Social
+    </a>
+
+    <nav>
+      <a routerLink="/publicaciones" routerLinkActive="activo">
+        <app-icono nombre="inicio" />Publicaciones
+      </a>
+      <a routerLink="/mi-perfil" routerLinkActive="activo">
+        <app-icono nombre="usuario" />Mi perfil
+      </a>
+    </nav>
+
+    <div class="pie">
+      @if (auth.usuario(); as usuario) {
+        <a class="quien" routerLink="/mi-perfil">
+          <app-avatar
+            [nombre]="usuario.nombre + ' ' + usuario.apellido"
+            [imagen]="usuario.imagenPerfil"
+            tamanio="sm"
+          />
+          <span>
+            <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong>
+            <small>{{ '@' + usuario.nombreUsuario }}</small>
+          </span>
+        </a>
+        <button type="button" class="salir" (click)="cerrarSesion()">
+          <app-icono nombre="salir" />Cerrar sesión
+        </button>
+      } @else {
+        <a class="button" routerLink="/login"><app-icono nombre="ingresar" />Ingresar</a>
+        <a class="button secondary" routerLink="/registro">
+          <app-icono nombre="registrarse" />Crear cuenta
+        </a>
+      }
+    </div>
+  </aside>
+
+  <main class="contenido">
+    <router-outlet />
+  </main>
+</div>

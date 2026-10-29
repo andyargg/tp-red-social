@@ -1,0 +1,12 @@
+.foto { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+.foto p { margin-top: 0.5rem; }
+.elegir { display: inline-flex; margin: 0; cursor: pointer; }
+input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+textarea { resize: vertical; }
+.contador { text-align: right; }

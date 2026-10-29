@@ -1,0 +1,136 @@
+<div class="pantalla-auth">
+  <div class="card tarjeta-auth ancha">
+    <div class="encabezado">
+      <img src="favicon.svg" alt="" width="40" height="40" />
+      <h1>Crear cuenta</h1>
+      <p>Completá tus datos para sumarte a la red.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="registrarse()" novalidate>
+      <div class="foto">
+        <app-avatar
+          [nombre]="form.controls.nombre.value + ' ' + form.controls.apellido.value"
+          [imagen]="vistaPrevia()"
+          tamanio="lg"
+        />
+        <div>
+          <label class="button secondary small elegir" for="imagenPerfil">
+            <app-icono nombre="imagen" />{{
+              vistaPrevia() ? 'Cambiar foto' : 'Elegir foto de perfil'
+            }}
+          </label>
+          <input
+            id="imagenPerfil"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            (change)="elegirImagen($event)"
+          />
+          @if (form.controls.imagenPerfil.errors; as errores) {
+            <p class="campo-error">
+              @if (errores['tipoImagen']) {
+                La imagen debe ser JPG, PNG, WEBP o GIF.
+              } @else {
+                La imagen puede pesar hasta 5 MB.
+              }
+            </p>
+          } @else {
+            <p class="ayuda">Opcional. JPG, PNG, WEBP o GIF de hasta 5 MB.</p>
+          }
+        </div>
+      </div>
+
+      <div class="grilla">
+        <div>
+          <label for="nombre">Nombre</label>
+          <input id="nombre" formControlName="nombre" autocomplete="given-name" />
+          @if (invalido('nombre')) {
+            <p class="campo-error">Ingresá tu nombre (hasta 50 caracteres).</p>
+          }
+        </div>
+        <div>
+          <label for="apellido">Apellido</label>
+          <input id="apellido" formControlName="apellido" autocomplete="family-name" />
+          @if (invalido('apellido')) {
+            <p class="campo-error">Ingresá tu apellido (hasta 50 caracteres).</p>
+          }
+        </div>
+
+        <div>
+          <label for="correo">Correo</label>
+          <input id="correo" type="email" formControlName="correo" autocomplete="email" />
+          @if (invalido('correo')) {
+            <p class="campo-error">
+              {{
+                form.controls.correo.errors?.['required']
+                  ? 'Ingresá tu correo.'
+                  : 'El correo no es válido.'
+              }}
+            </p>
+          }
+        </div>
+        <div>
+          <label for="nombreUsuario">Nombre de usuario</label>
+          <input id="nombreUsuario" formControlName="nombreUsuario" autocomplete="username" />
+          @if (invalido('nombreUsuario')) {
+            <p class="campo-error">De 3 a 20 letras, números, puntos o guiones bajos.</p>
+          }
+        </div>
+
+        <div>
+          <label for="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="new-password"
+          />
+          @if (invalido('password')) {
+            <p class="campo-error">Al menos 8 caracteres, una mayúscula y un número.</p>
+          }
+        </div>
+        <div>
+          <label for="repetirPassword">Repetir contraseña</label>
+          <input
+            id="repetirPassword"
+            type="password"
+            formControlName="repetirPassword"
+            autocomplete="new-password"
+          />
+          @if (invalido('repetirPassword')) {
+            <p class="campo-error">
+              {{
+                form.controls.repetirPassword.errors?.['noCoinciden']
+                  ? 'Las contraseñas no coinciden.'
+                  : 'Repetí la contraseña.'
+              }}
+            </p>
+          }
+        </div>
+
+        <div>
+          <label for="fechaNacimiento">Fecha de nacimiento</label>
+          <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" [max]="hoy" />
+          @if (invalido('fechaNacimiento')) {
+            <p class="campo-error">
+              {{
+                form.controls.fechaNacimiento.errors?.['fechaFutura']
+                  ? 'La fecha no puede ser futura.'
+                  : 'Ingresá tu fecha de nacimiento.'
+              }}
+            </p>
+          }
+        </div>
+      </div>
+
+      <label for="descripcion">Descripción breve</label>
+      <textarea id="descripcion" rows="3" formControlName="descripcion" maxlength="200"></textarea>
+      <p class="ayuda contador">{{ form.controls.descripcion.value.length }}/200</p>
+
+      <button type="submit" class="enviar" [disabled]="enviando()">
+        <app-icono nombre="registrarse" />{{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <p class="alternativa">¿Ya tenés cuenta? <a routerLink="/login">Ingresá</a></p>
+  </div>
+</div>

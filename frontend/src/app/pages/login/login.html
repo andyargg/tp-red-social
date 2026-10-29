@@ -1,0 +1,50 @@
+<div class="pantalla-auth">
+  <div class="card tarjeta-auth">
+    <div class="encabezado">
+      <img src="favicon.svg" alt="" width="40" height="40" />
+      <h1>Ingresar</h1>
+      <p>Entrá con tu correo o nombre de usuario.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+      <label for="usuario">Correo o nombre de usuario</label>
+      <input id="usuario" formControlName="usuario" autocomplete="username" />
+      @if (form.controls.usuario.touched && form.controls.usuario.errors) {
+        <p class="campo-error">Ingresá tu correo o nombre de usuario.</p>
+      }
+
+      <label for="password">Contraseña</label>
+      <div class="con-boton">
+        <input
+          id="password"
+          formControlName="password"
+          [type]="verPassword() ? 'text' : 'password'"
+          autocomplete="current-password"
+        />
+        <button
+          type="button"
+          class="secondary"
+          (click)="verPassword.set(!verPassword())"
+          [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+        >
+          <app-icono nombre="ojo" />
+        </button>
+      </div>
+      @if (form.controls.password.touched && form.controls.password.errors; as errores) {
+        <p class="campo-error">
+          @if (errores['required']) {
+            Ingresá tu contraseña.
+          } @else {
+            La contraseña tiene al menos 8 caracteres, una mayúscula y un número.
+          }
+        </p>
+      }
+
+      <button type="submit" class="enviar" [disabled]="enviando()">
+        <app-icono nombre="ingresar" />{{ enviando() ? 'Ingresando…' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <p class="alternativa">¿No tenés cuenta? <a routerLink="/registro">Creá una</a></p>
+  </div>
+</div>
