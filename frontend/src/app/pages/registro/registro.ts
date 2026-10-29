@@ -78,7 +78,7 @@ export class Registro {
         this.modal.abrir({
           tipo: 'exito',
           titulo: '¡Cuenta creada!',
-          mensaje: `Bienvenido/a, ${usuario.nombre}. Ya podés usar la red social.`,
+          mensaje: `Bienvenido/a, ${usuario.nombre}. Ya podés usar Socialito.`,
         });
       },
       error: (error) => {

@@ -1,4 +1,4 @@
-# TP #2 — Red social
+# Socialito — TP #2 Red social
 
 Programación IV · UTN Avellaneda · 2026 C1
 

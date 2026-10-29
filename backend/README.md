@@ -1,4 +1,4 @@
-# Backend — Red social
+# Backend — Socialito
 
 API en NestJS con MongoDB. Ver el [README principal](../README.md) para correrlo y la lista de rutas.
 

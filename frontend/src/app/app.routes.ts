@@ -5,12 +5,12 @@ import { Shell } from './layout/shell';
 export const routes: Routes = [
   {
     path: 'login',
-    title: 'Ingresar · Red Social',
+    title: 'Ingresar · Socialito',
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
     path: 'registro',
-    title: 'Crear cuenta · Red Social',
+    title: 'Crear cuenta · Socialito',
     loadComponent: () => import('./pages/registro/registro').then((m) => m.Registro),
   },
   {
@@ -20,13 +20,13 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'publicaciones' },
       {
         path: 'publicaciones',
-        title: 'Publicaciones · Red Social',
+        title: 'Publicaciones · Socialito',
         loadComponent: () =>
           import('./pages/publicaciones/publicaciones').then((m) => m.Publicaciones),
       },
       {
         path: 'mi-perfil',
-        title: 'Mi perfil · Red Social',
+        title: 'Mi perfil · Socialito',
         loadComponent: () => import('./pages/mi-perfil/mi-perfil').then((m) => m.MiPerfil),
       },
     ],

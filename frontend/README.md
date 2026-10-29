@@ -1,4 +1,4 @@
-# Frontend — Red social
+# Frontend — Socialito
 
 Aplicación en Angular. Ver el [README principal](../README.md) para correrla.
 
