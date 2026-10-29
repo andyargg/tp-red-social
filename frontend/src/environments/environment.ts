@@ -1,4 +1,4 @@
-// producción: se reemplaza por la URL del backend desplegado
+// producción: el backend desplegado en Render
 export const environment = {
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl: 'https://tp-red-social-api.onrender.com/api',
 };

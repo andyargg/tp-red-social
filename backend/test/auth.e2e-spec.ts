@@ -150,6 +150,12 @@ describe('Auth (e2e)', () => {
     });
   });
 
+  it('GET /api/salud responde 200', async () => {
+    await request(app.getHttpServer())
+      .get('/api/salud')
+      .expect(200, { estado: 'ok' });
+  });
+
   describe('POST /api/auth/login', () => {
     it('ingresa con el nombre de usuario', async () => {
       const res = await request(app.getHttpServer())

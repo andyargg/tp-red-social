@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: tp-red-social-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /api/salud
+    autoDeploy: true
+    # solo redeploya cuando cambia el backend
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      - key: NODE_VERSION
+        value: '24'
+      # evita descargar el MongoDB en memoria que usan los tests
+      - key: MONGOMS_DISABLE_POSTINSTALL
+        value: '1'
+      - key: FRONTEND_URL
+        value: https://andyargg.github.io
+      - key: JWT_SECRET
+        generateValue: true
+      # se cargan a mano en el panel de Render al crear el servicio
+      - key: MONGODB_URI
+        sync: false
+      - key: CLOUDINARY_URL
+        sync: false

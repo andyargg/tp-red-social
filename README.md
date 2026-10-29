@@ -2,7 +2,8 @@
 
 Programación IV · UTN Avellaneda · 2026 C1
 
-**Frontend publicado:** https://andyargg.github.io/tp-red-social/
+- **Frontend:** https://andyargg.github.io/tp-red-social/ (GitHub Pages)
+- **Backend:** https://tp-red-social-api.onrender.com/api (Render)
 
 | Carpeta | Stack |
 |---|---|
@@ -27,6 +28,13 @@ cd frontend
 npm install
 npm start              # http://localhost:4200
 ```
+
+## Deploy
+
+- **Frontend:** cada push a `main` que toca `frontend/` lo compila y publica en GitHub Pages (`.github/workflows/deploy-frontend.yml`).
+- **Backend:** Render lo despliega a partir de `render.yaml`. Las variables `MONGODB_URI` y `CLOUDINARY_URL` se cargan en el panel de Render y `JWT_SECRET` se genera solo.
+
+En el plan gratuito, Render apaga el backend después de 15 minutos sin uso, y la primera petición tarda alrededor de un minuto.
 
 ## Tests
 
