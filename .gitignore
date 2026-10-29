@@ -1,0 +1,27 @@
+# Local design notes, not committed
+design.md
+
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+.angular/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Uploaded images (backend)
+backend/uploads/
+
+# Logs
+*.log
+
+# IDEs and system files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
