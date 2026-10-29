@@ -1,0 +1,58 @@
+@let p = datos();
+<article class="card publicacion">
+  <header>
+    <app-avatar
+      [nombre]="p.autor.nombre + ' ' + p.autor.apellido"
+      [imagen]="p.autor.imagenPerfil"
+      tamanio="sm"
+    />
+    <div class="autor">
+      <strong>{{ p.autor.nombre }} {{ p.autor.apellido }}</strong>
+      <span class="meta">
+        {{ '@' + p.autor.nombreUsuario }} ·
+        <time [attr.datetime]="p.createdAt">{{ p.createdAt | date: 'd MMM y, HH:mm' }}</time>
+      </span>
+    </div>
+    @if (puedoEliminar()) {
+      <button
+        type="button"
+        class="ghost-danger small"
+        (click)="eliminar()"
+        [disabled]="procesando()"
+        title="Eliminar publicación"
+        aria-label="Eliminar publicación"
+      >
+        <app-icono nombre="basura" [tamanio]="14" />
+      </button>
+    }
+  </header>
+
+  <h3>{{ p.titulo }}</h3>
+  <p class="mensaje">{{ p.mensaje }}</p>
+  @if (p.imagen) {
+    <img class="imagen" [src]="p.imagen" [alt]="'Imagen de ' + p.titulo" loading="lazy" />
+  }
+
+  <footer>
+    <button
+      type="button"
+      class="secondary small me-gusta"
+      [class.activo]="p.meGustaYo"
+      [attr.aria-pressed]="p.meGustaYo"
+      (click)="alternarMeGusta()"
+      [disabled]="procesando()"
+      [title]="p.meGustaYo ? 'Quitar me gusta' : 'Me gusta'"
+    >
+      <app-icono nombre="corazon" [tamanio]="15" [relleno]="p.meGustaYo" />
+      <span class="num">{{ p.cantidadMeGusta }}</span>
+      <span class="sr-only">me gusta</span>
+    </button>
+    <span class="meta contador">
+      <app-icono nombre="comentario" [tamanio]="15" />
+      <span class="num">{{ p.cantidadComentarios }}</span>
+      {{ p.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+    </span>
+  </footer>
+
+  <ng-content />
+</article>

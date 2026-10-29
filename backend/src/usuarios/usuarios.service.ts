@@ -21,6 +21,10 @@ export class UsuariosService {
     return this.usuarios.exists({ nombreUsuario: nombreUsuario.toLowerCase() });
   }
 
+  buscarPorId(id: string) {
+    return this.usuarios.findById(id);
+  }
+
   // el login acepta el correo o el nombre de usuario en el mismo campo
   buscarParaLogin(identificador: string) {
     return this.usuarios

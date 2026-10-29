@@ -43,12 +43,41 @@
       </div>
     </div>
 
-    <h2>Mis publicaciones</h2>
-    <div class="card vacio">
-      <span class="icono-vacio"><app-icono nombre="bandeja" [tamanio]="20" /></span>
-      <strong>Todavía no publicaste nada</strong>
-      <p>Acá vas a ver tus últimas 3 publicaciones.</p>
+    <div class="titulo-seccion">
+      <h2>Mis últimas publicaciones</h2>
+      @if (total() > 3) {
+        <span class="meta"
+          ><span class="num">3</span> de <span class="num">{{ total() }}</span></span
+        >
+      }
     </div>
+    @if (error(); as mensaje) {
+      <div class="card vacio">
+        <span class="icono-vacio"><app-icono nombre="alerta" [tamanio]="20" /></span>
+        <strong>No se pudieron cargar tus publicaciones</strong>
+        <p>{{ mensaje }}</p>
+        <div class="acciones">
+          <button type="button" class="secondary" (click)="cargar()">Reintentar</button>
+        </div>
+      </div>
+    } @else if (cargando()) {
+      <p class="meta">Cargando tus publicaciones…</p>
+    } @else {
+      @for (p of publicaciones(); track p._id) {
+        <app-publicacion [publicacion]="p" (eliminada)="cargar()">
+          <app-comentarios [publicacion]="p._id" />
+        </app-publicacion>
+      } @empty {
+        <div class="card vacio">
+          <span class="icono-vacio"><app-icono nombre="bandeja" [tamanio]="20" /></span>
+          <strong>Todavía no publicaste nada</strong>
+          <p>Acá vas a ver tus últimas 3 publicaciones con sus comentarios.</p>
+          <div class="acciones">
+            <a class="button" routerLink="/publicaciones">Ir a publicar</a>
+          </div>
+        </div>
+      }
+    }
   } @else {
     <div class="card vacio">
       <span class="icono-vacio"><app-icono nombre="usuario" [tamanio]="20" /></span>

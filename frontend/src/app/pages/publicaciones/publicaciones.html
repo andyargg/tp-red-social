@@ -1,0 +1,113 @@
+<section class="feed">
+  <header class="page-header encabezado">
+    <div>
+      <h1>Publicaciones</h1>
+      <p>Lo último que compartió la comunidad.</p>
+    </div>
+    @if (auth.logueado() && !escribiendo()) {
+      <button type="button" (click)="escribiendo.set(true)">
+        <app-icono nombre="mas" />Nueva publicación
+      </button>
+    }
+  </header>
+
+  @if (auth.usuario(); as usuario) {
+    @if (escribiendo()) {
+      <app-nueva-publicacion (creada)="alPublicar()" (cancelada)="escribiendo.set(false)" />
+    }
+
+    <div class="barra">
+      <div class="segmentos" role="group" aria-label="Ordenar publicaciones">
+        <button
+          type="button"
+          [class.activo]="orden() === 'fecha'"
+          [attr.aria-pressed]="orden() === 'fecha'"
+          (click)="ordenarPor('fecha')"
+        >
+          Más recientes
+        </button>
+        <button
+          type="button"
+          [class.activo]="orden() === 'meGusta'"
+          [attr.aria-pressed]="orden() === 'meGusta'"
+          (click)="ordenarPor('meGusta')"
+        >
+          Más me gusta
+        </button>
+      </div>
+      @if (total()) {
+        <span class="meta">
+          <span class="num">{{ total() }}</span>
+          {{ total() === 1 ? 'publicación' : 'publicaciones' }}
+        </span>
+      }
+    </div>
+
+    @if (error(); as mensaje) {
+      <div class="card vacio">
+        <span class="icono-vacio"><app-icono nombre="alerta" [tamanio]="20" /></span>
+        <strong>No se pudieron cargar las publicaciones</strong>
+        <p>{{ mensaje }}</p>
+        <div class="acciones">
+          <button type="button" class="secondary" (click)="recargar()">Reintentar</button>
+        </div>
+      </div>
+    } @else if (cargando() && !publicaciones().length) {
+      <div class="cargando" role="status"><span class="spinner"></span>Cargando publicaciones…</div>
+    } @else {
+      <div class="lista" [class.actualizando]="cargando()">
+        @for (p of publicaciones(); track p._id) {
+          <app-publicacion [publicacion]="p" (eliminada)="alEliminar()" />
+        } @empty {
+          <div class="card vacio">
+            <span class="icono-vacio"><app-icono nombre="bandeja" [tamanio]="20" /></span>
+            <strong>Todavía no hay publicaciones</strong>
+            <p>{{ usuario.nombre }}, ¡animate a publicar la primera!</p>
+            @if (!escribiendo()) {
+              <div class="acciones">
+                <button type="button" (click)="escribiendo.set(true)">
+                  <app-icono nombre="mas" />Nueva publicación
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (paginas() > 1) {
+        <nav class="paginacion" aria-label="Páginas">
+          <button
+            type="button"
+            class="secondary small"
+            [disabled]="pagina() === 1 || cargando()"
+            (click)="irA(pagina() - 1)"
+          >
+            <app-icono nombre="izquierda" [tamanio]="14" />Anterior
+          </button>
+          <span class="meta">
+            Página <span class="num">{{ pagina() }}</span> de
+            <span class="num">{{ paginas() }}</span>
+          </span>
+          <button
+            type="button"
+            class="secondary small"
+            [disabled]="pagina() === paginas() || cargando()"
+            (click)="irA(pagina() + 1)"
+          >
+            Siguiente<app-icono nombre="derecha" [tamanio]="14" />
+          </button>
+        </nav>
+      }
+    }
+  } @else {
+    <div class="card vacio">
+      <span class="icono-vacio"><app-icono nombre="usuario" [tamanio]="20" /></span>
+      <strong>Ingresá para ver las publicaciones</strong>
+      <p>Las publicaciones solo están disponibles para usuarios registrados.</p>
+      <div class="acciones">
+        <a class="button" routerLink="/login">Ingresar</a>
+        <a class="button secondary" routerLink="/registro">Crear cuenta</a>
+      </div>
+    </div>
+  }
+</section>

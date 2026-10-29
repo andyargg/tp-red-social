@@ -34,3 +34,5 @@
 }
 
 @media (max-width: 600px) { .hero { flex-direction: column; text-align: center; } .nombre { justify-content: center; } }
+
+.titulo-seccion { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }

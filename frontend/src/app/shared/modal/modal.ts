@@ -8,7 +8,7 @@ const ICONOS = { exito: 'check', error: 'alerta', info: 'info' } as const;
   selector: 'app-modal',
   imports: [Icono],
   template: `
-    <dialog #dialogo (close)="modal.cerrar()" [class]="'modal-' + (datos()?.tipo ?? 'info')">
+    <dialog #dialogo (close)="alCerrar()" [class]="'modal-' + (datos()?.tipo ?? 'info')">
       @if (datos(); as d) {
         <div class="encabezado">
           <span class="icono"><app-icono [nombre]="iconos[d.tipo ?? 'info']" /></span>
@@ -16,7 +16,14 @@ const ICONOS = { exito: 'check', error: 'alerta', info: 'info' } as const;
         </div>
         <p>{{ d.mensaje }}</p>
         <div class="dialog-actions">
-          <button type="button" (click)="dialogo.close()" autofocus>{{ d.textoBoton }}</button>
+          @if (d.textoCancelar) {
+            <button type="button" class="secondary" (click)="responder(false)">
+              {{ d.textoCancelar }}
+            </button>
+          }
+          <button type="button" [class.danger]="d.peligroso" (click)="responder(true)" autofocus>
+            {{ d.textoBoton }}
+          </button>
         </div>
       }
     </dialog>
@@ -57,6 +64,8 @@ export class Modal {
   protected readonly datos = this.modal.actual;
   protected readonly iconos = ICONOS;
   private readonly dialogo = viewChild.required<ElementRef<HTMLDialogElement>>('dialogo');
+  // Escape o cerrar sin tocar el botón principal cuenta como cancelar
+  private aceptado = false;
 
   constructor() {
     effect(() => {
@@ -64,5 +73,16 @@ export class Modal {
       if (this.datos() && !dialogo.open) dialogo.showModal();
       if (!this.datos() && dialogo.open) dialogo.close();
     });
+  }
+
+  protected responder(aceptado: boolean) {
+    this.aceptado = aceptado;
+    this.dialogo().nativeElement.close();
+  }
+
+  protected alCerrar() {
+    const aceptado = this.aceptado;
+    this.aceptado = false;
+    if (this.datos()) this.modal.cerrar(aceptado);
   }
 }

@@ -16,7 +16,7 @@ Copiar `.env.example` a `.env`:
 
 ## Módulos
 
-- `auth`: registro y login.
+- `auth`: registro, login y `JwtGuard`, que protege las rutas con el token.
 - `usuarios`: modelo y acceso a los usuarios.
-- `publicaciones`: modelo de publicaciones (las rutas llegan en el sprint 2).
+- `publicaciones`: alta, listado paginado, baja lógica y me gusta de publicaciones; lectura de comentarios.
 - `imagenes`: subida de imágenes a Cloudinary (carpeta `red-social/`).

@@ -1,0 +1,39 @@
+.publicacion { padding: 1.25rem; margin-bottom: 1rem; }
+
+header { display: flex; align-items: center; gap: 0.75rem; }
+.autor { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.autor strong, .autor .meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+header button { padding: 0.4rem; }
+
+h3 { margin: 1rem 0 0.35rem; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.mensaje { margin: 0; color: var(--text-primary); white-space: pre-line; overflow-wrap: anywhere; }
+
+.imagen {
+  display: block;
+  width: 100%;
+  max-height: 28rem;
+  object-fit: cover;
+  margin-top: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+
+footer { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
+.me-gusta { color: var(--text-secondary); }
+.me-gusta.activo {
+  color: #e11d48;
+  border-color: rgb(244 63 94 / 0.35);
+  background: rgb(244 63 94 / 0.08);
+}
+.me-gusta.activo:hover { background: rgb(244 63 94 / 0.14); }
+.contador { display: inline-flex; align-items: center; gap: 0.35rem; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -7,24 +7,29 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
+import { Recortar } from '../../validacion/recortar.js';
 import { PASSWORD_REGEX, PASSWORD_MENSAJE } from './password.js';
 
 // con stopAtFirstError se informa un solo error por campo, y class-validator evalúa
 // primero el decorador de más abajo: por eso "obligatorio" va al final
 export class RegistroDto {
+  @Recortar()
   @MaxLength(50, { message: 'El nombre puede tener hasta 50 caracteres' })
   @IsString({ message: 'El nombre es obligatorio' })
   @IsNotEmpty({ message: 'El nombre es obligatorio' })
   nombre: string;
 
+  @Recortar()
   @MaxLength(50, { message: 'El apellido puede tener hasta 50 caracteres' })
   @IsString({ message: 'El apellido es obligatorio' })
   @IsNotEmpty({ message: 'El apellido es obligatorio' })
   apellido: string;
 
+  @Recortar()
   @IsEmail({}, { message: 'El correo no es válido' })
   correo: string;
 
+  @Recortar()
   @Matches(/^[a-zA-Z0-9._]{3,20}$/, {
     message:
       'El nombre de usuario debe tener entre 3 y 20 letras, números, puntos o guiones bajos',
@@ -37,6 +42,7 @@ export class RegistroDto {
   @IsDateString({}, { message: 'La fecha de nacimiento no es válida' })
   fechaNacimiento: string;
 
+  @Recortar()
   @IsOptional()
   @MaxLength(200, {
     message: 'La descripción puede tener hasta 200 caracteres',

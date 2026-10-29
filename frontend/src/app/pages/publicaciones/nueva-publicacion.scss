@@ -1,0 +1,27 @@
+.nueva h2 { margin-top: 0; }
+.nueva label:first-of-type { margin-top: 0; }
+textarea { resize: vertical; }
+.contador { text-align: right; }
+
+.vista-previa { position: relative; margin-top: 0.75rem; }
+.vista-previa img {
+  display: block;
+  width: 100%;
+  max-height: 18rem;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.quitar { position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.35rem; }
+
+.acciones-form { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1rem; }
+.acciones-form .ayuda { margin: 0; }
+.espacio { flex: 1; }
+.elegir { display: inline-flex; margin: 0; cursor: pointer; }
+input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

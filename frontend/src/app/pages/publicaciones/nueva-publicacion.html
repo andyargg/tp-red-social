@@ -1,0 +1,58 @@
+<form class="card nueva" [formGroup]="form" (ngSubmit)="publicar()" novalidate>
+  <h2>Nueva publicación</h2>
+
+  <label for="titulo">Título</label>
+  <input id="titulo" formControlName="titulo" maxlength="100" />
+  @if (invalido('titulo')) {
+    <p class="campo-error">Ingresá un título (hasta 100 caracteres).</p>
+  }
+
+  <label for="mensaje">Mensaje</label>
+  <textarea id="mensaje" rows="4" formControlName="mensaje" maxlength="1000"></textarea>
+  @if (invalido('mensaje')) {
+    <p class="campo-error">Escribí un mensaje (hasta 1000 caracteres).</p>
+  } @else {
+    <p class="ayuda contador">{{ form.controls.mensaje.value.length }}/1000</p>
+  }
+
+  @if (vistaPrevia(); as src) {
+    <div class="vista-previa">
+      <img [src]="src" alt="Vista previa de la imagen" />
+      <button
+        type="button"
+        class="secondary small quitar"
+        (click)="cambiarImagen(null)"
+        aria-label="Quitar imagen"
+      >
+        <app-icono nombre="cerrar" [tamanio]="14" />
+      </button>
+    </div>
+  }
+  @if (form.controls.imagen.errors; as errores) {
+    <p class="campo-error">
+      @if (errores['tipoImagen']) {
+        La imagen debe ser JPG, PNG, WEBP o GIF.
+      } @else {
+        La imagen puede pesar hasta 5 MB.
+      }
+    </p>
+  }
+
+  <div class="acciones-form">
+    <label class="button secondary small elegir" for="imagenPublicacion">
+      <app-icono nombre="imagen" />{{ vistaPrevia() ? 'Cambiar imagen' : 'Agregar imagen' }}
+    </label>
+    <input
+      id="imagenPublicacion"
+      type="file"
+      accept="image/jpeg,image/png,image/webp,image/gif"
+      (change)="elegirImagen($event)"
+    />
+    <span class="ayuda">Opcional · hasta 5 MB</span>
+    <span class="espacio"></span>
+    <button type="button" class="secondary" (click)="cancelada.emit()">Cancelar</button>
+    <button type="submit" [disabled]="enviando()">
+      <app-icono nombre="mas" />{{ enviando() ? 'Publicando…' : 'Publicar' }}
+    </button>
+  </div>
+</form>

@@ -26,6 +26,15 @@ const TRAZOS = {
     '<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
   info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
   ojo: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+  corazon:
+    '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  comentario: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  basura:
+    '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
+  mas: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  izquierda: '<path d="m15 18-6-6 6-6"/>',
+  derecha: '<path d="m9 18 6-6-6-6"/>',
+  cerrar: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
 };
 
 export type NombreIcono = keyof typeof TRAZOS;
@@ -44,12 +53,13 @@ export type NombreIcono = keyof typeof TRAZOS;
 export class Icono {
   readonly nombre = input.required<NombreIcono>();
   readonly tamanio = input(16);
+  readonly relleno = input(false);
   private readonly sanitizer = inject(DomSanitizer);
 
   // los trazos son constantes de este archivo, nunca datos del usuario
   protected readonly svg = computed(() =>
     this.sanitizer.bypassSecurityTrustHtml(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${this.tamanio()}" height="${this.tamanio()}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${TRAZOS[this.nombre()]}</svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${this.tamanio()}" height="${this.tamanio()}" viewBox="0 0 24 24" fill="${this.relleno() ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${TRAZOS[this.nombre()]}</svg>`,
     ),
   );
 }

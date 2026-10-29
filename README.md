@@ -62,4 +62,11 @@ cd frontend && npx ng test --watch=false
 | POST | `/api/auth/registro` | `multipart/form-data` con nombre, apellido, correo, nombreUsuario, password, fechaNacimiento, descripcion e `imagenPerfil` (opcional) | 201, 400, 409 |
 | POST | `/api/auth/login` | `{ usuario, password }`: `usuario` acepta el correo o el nombre de usuario | 200, 400, 401, 403 |
 
-Las dos rutas devuelven `{ usuario, token }`. El token es un JWT que vence a los 15 minutos.
+| POST | `/api/publicaciones` | `multipart/form-data` con titulo, mensaje e `imagen` (opcional) | 201, 400, 401 |
+| GET | `/api/publicaciones` | Query: `orden` (`fecha` o `meGusta`), `usuario` (id del autor), `offset`, `limit` (máx. 50). Devuelve `{ publicaciones, total, offset, limit }` | 200, 400, 401 |
+| DELETE | `/api/publicaciones/:id` | Baja lógica. Solo el autor o un administrador | 204, 401, 403, 404 |
+| POST | `/api/publicaciones/:id/me-gusta` | Da me gusta (uno por usuario) | 201, 401, 404, 409 |
+| DELETE | `/api/publicaciones/:id/me-gusta` | Quita el me gusta, solo si se había dado | 200, 401, 404, 409 |
+| GET | `/api/publicaciones/:id/comentarios` | Query: `offset`, `limit`. Los más recientes primero | 200, 400, 401, 404 |
+
+Las rutas de auth devuelven `{ usuario, token }`. El token es un JWT que vence a los 15 minutos. Las rutas de publicaciones exigen el header `Authorization: Bearer <token>` de un usuario habilitado.

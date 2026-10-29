@@ -1,19 +1,9 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { Test } from '@nestjs/testing';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
-import { AppModule } from '../src/app.module.js';
-import { configurarApp } from '../src/configurar-app.js';
 import { AuthService } from '../src/auth/auth.service.js';
 import { RegistroDto } from '../src/auth/dto/registro.dto.js';
-import { ImagenesService } from '../src/imagenes/imagenes.service.js';
 import { UsuariosService } from '../src/usuarios/usuarios.service.js';
-
-// PNG de 1x1 para probar la subida de la imagen de perfil
-const PNG = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
-  'base64',
-);
+import { PNG, crearAppDePrueba, crearImagenesFalso } from './app-de-prueba.js';
 
 const datosValidos = {
   nombre: 'Ana',
@@ -36,39 +26,17 @@ function registrar(
   return req;
 }
 
-// reemplaza a Cloudinary: los tests no suben nada ni necesitan credenciales
-const imagenesFalso = {
-  subidas: [] as { carpeta: string; tamanio: number }[],
-  async subir(archivo: Express.Multer.File, carpeta: string) {
-    this.subidas.push({ carpeta, tamanio: archivo.size });
-    return `https://res.cloudinary.com/test/image/upload/red-social/${carpeta}/foto.png`;
-  },
-};
+const imagenesFalso = crearImagenesFalso();
 
 describe('Auth (e2e)', () => {
-  let mongo: MongoMemoryServer;
   let app: NestExpressApplication;
+  let cerrar: () => Promise<void>;
 
   beforeAll(async () => {
-    mongo = await MongoMemoryServer.create();
-    process.env.MONGODB_URI = mongo.getUri();
-    process.env.JWT_SECRET = 'secreto-de-test';
-
-    const modulo = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(ImagenesService)
-      .useValue(imagenesFalso)
-      .compile();
-    app = modulo.createNestApplication<NestExpressApplication>();
-    configurarApp(app);
-    await app.init();
+    ({ app, cerrar } = await crearAppDePrueba(imagenesFalso));
   }, 120_000);
 
-  afterAll(async () => {
-    await app?.close();
-    await mongo?.stop();
-  });
+  afterAll(() => cerrar?.());
 
   describe('POST /api/auth/registro', () => {
     it('crea el usuario con perfil "usuario", guarda la imagen y no devuelve la contraseña', async () => {

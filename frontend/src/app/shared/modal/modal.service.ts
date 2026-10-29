@@ -7,23 +7,32 @@ export interface DatosModal {
   mensaje: string;
   tipo?: TipoModal;
   textoBoton?: string;
+  // con textoCancelar el modal pide confirmación y muestra dos botones
+  textoCancelar?: string;
+  peligroso?: boolean;
 }
 
-// reemplaza a alert(): un único modal para toda la app, montado en App
+// reemplaza a alert() y confirm(): un único modal para toda la app, montado en App
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   readonly actual = signal<DatosModal | null>(null);
-  private alCerrar?: () => void;
+  private alCerrar?: (aceptado: boolean) => void;
 
-  abrir(datos: DatosModal): Promise<void> {
-    this.alCerrar?.();
+  // se resuelve en true si se tocó el botón principal
+  abrir(datos: DatosModal): Promise<boolean> {
+    this.alCerrar?.(false);
     this.actual.set({ tipo: 'info', textoBoton: 'Aceptar', ...datos });
     return new Promise((resolve) => (this.alCerrar = resolve));
   }
 
-  cerrar() {
-    this.actual.set(null);
-    this.alCerrar?.();
+  confirmar(datos: DatosModal): Promise<boolean> {
+    return this.abrir({ textoBoton: 'Confirmar', textoCancelar: 'Cancelar', ...datos });
+  }
+
+  cerrar(aceptado = false) {
+    const alCerrar = this.alCerrar;
     this.alCerrar = undefined;
+    this.actual.set(null);
+    alCerrar?.(aceptado);
   }
 }
