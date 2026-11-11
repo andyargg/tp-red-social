@@ -60,10 +60,16 @@ export class PublicacionesService {
         ? { cantidadMeGusta: -1, createdAt: -1, _id: -1 }
         : { createdAt: -1, _id: -1 };
 
+    // la cantidad de me gusta solo se calcula antes de ordenar cuando hace falta
+    const contar: PipelineStage[] =
+      orden === 'meGusta'
+        ? [{ $addFields: { cantidadMeGusta: { $size: '$meGusta' } } }]
+        : [];
+
     const [publicaciones, total] = await Promise.all([
       this.publicaciones.aggregate([
         { $match: filtro },
-        { $addFields: { cantidadMeGusta: { $size: '$meGusta' } } },
+        ...contar,
         { $sort: criterio },
         { $skip: offset },
         { $limit: limit },

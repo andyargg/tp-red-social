@@ -31,6 +31,19 @@ export class AuthService {
       .pipe(tap((s) => this.guardar(s)));
   }
 
+  // trae los datos actuales (por ejemplo, si lo hicieron administrador después de ingresar)
+  refrescarUsuario() {
+    if (!this.token) return;
+    this.http.get<Usuario>(`${this.url}/yo`).subscribe({
+      next: (usuario) => {
+        localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
+        this.usuarioActual.set(usuario);
+      },
+      // si el token venció, el interceptor ya cierra la sesión
+      error: () => undefined,
+    });
+  }
+
   cerrarSesion() {
     localStorage.removeItem(CLAVE_TOKEN);
     localStorage.removeItem(CLAVE_USUARIO);

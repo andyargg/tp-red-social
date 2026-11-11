@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
@@ -43,6 +44,15 @@ export class PublicacionCard {
       },
       error: (error) => {
         this.procesando.set(false);
+        // 409: el me gusta ya estaba en ese estado (por ejemplo, desde otra pestaña); se sincroniza
+        if (error instanceof HttpErrorResponse && error.status === 409) {
+          this.datos.update((p) => ({
+            ...p,
+            meGustaYo: !meGustaYo,
+            cantidadMeGusta: Math.max(0, p.cantidadMeGusta + (meGustaYo ? -1 : 1)),
+          }));
+          return;
+        }
         this.modal.abrir({
           tipo: 'error',
           titulo: 'No se pudo actualizar el me gusta',

@@ -5,7 +5,7 @@ import { Publicacion } from '../../core/publicacion';
 import { PublicacionesService } from '../../core/publicaciones.service';
 import { Icono } from '../../shared/icono';
 import { ModalService } from '../../shared/modal/modal.service';
-import { imagenValida } from '../../shared/validadores';
+import { imagenValida, obligatorio } from '../../shared/validadores';
 
 @Component({
   selector: 'app-nueva-publicacion',
@@ -25,8 +25,8 @@ export class NuevaPublicacion {
   protected readonly vistaPrevia = signal<string | null>(null);
 
   protected readonly form = this.fb.group({
-    titulo: ['', [Validators.required, Validators.maxLength(100)]],
-    mensaje: ['', [Validators.required, Validators.maxLength(1000)]],
+    titulo: ['', [obligatorio, Validators.maxLength(100)]],
+    mensaje: ['', [obligatorio, Validators.maxLength(1000)]],
     imagen: this.fb.control<File | null>(null, [imagenValida]),
   });
 

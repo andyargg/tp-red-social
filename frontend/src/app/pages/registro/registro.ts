@@ -7,11 +7,15 @@ import { Avatar } from '../../shared/avatar';
 import { Icono } from '../../shared/icono';
 import { ModalService } from '../../shared/modal/modal.service';
 import {
+  CORREO_REGEX,
+  FECHA_MINIMA,
   NOMBRE_USUARIO_REGEX,
   PASSWORD_REGEX,
   coinciden,
   fechaPasada,
+  hoyLocal,
   imagenValida,
+  obligatorio,
 } from '../../shared/validadores';
 
 @Component({
@@ -28,14 +32,15 @@ export class Registro {
 
   protected readonly enviando = signal(false);
   protected readonly vistaPrevia = signal<string | null>(null);
-  protected readonly hoy = new Date().toISOString().slice(0, 10);
+  protected readonly hoy = hoyLocal();
+  protected readonly fechaMinima = FECHA_MINIMA;
 
   protected readonly form = this.fb.group(
     {
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      apellido: ['', [Validators.required, Validators.maxLength(50)]],
-      correo: ['', [Validators.required, Validators.email]],
-      nombreUsuario: ['', [Validators.required, Validators.pattern(NOMBRE_USUARIO_REGEX)]],
+      nombre: ['', [obligatorio, Validators.maxLength(50)]],
+      apellido: ['', [obligatorio, Validators.maxLength(50)]],
+      correo: ['', [obligatorio, Validators.pattern(CORREO_REGEX)]],
+      nombreUsuario: ['', [obligatorio, Validators.pattern(NOMBRE_USUARIO_REGEX)]],
       password: ['', [Validators.required, Validators.pattern(PASSWORD_REGEX)]],
       repetirPassword: ['', [Validators.required]],
       fechaNacimiento: ['', [Validators.required, fechaPasada]],
@@ -68,7 +73,10 @@ export class Registro {
     }
     const { repetirPassword, imagenPerfil, ...datos } = this.form.getRawValue();
     const formData = new FormData();
-    for (const [campo, valor] of Object.entries(datos)) formData.append(campo, valor.trim());
+    // la contraseña va tal cual: los espacios son parte de ella
+    for (const [campo, valor] of Object.entries(datos)) {
+      formData.append(campo, campo === 'password' ? valor : valor.trim());
+    }
     if (imagenPerfil) formData.append('imagenPerfil', imagenPerfil);
 
     this.enviando.set(true);

@@ -1,5 +1,13 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { PASSWORD_REGEX, coinciden, fechaPasada, imagenValida } from './validadores';
+import {
+  CORREO_REGEX,
+  PASSWORD_REGEX,
+  coinciden,
+  fechaPasada,
+  hoyLocal,
+  imagenValida,
+  obligatorio,
+} from './validadores';
 
 describe('validadores', () => {
   it('la contraseña exige 8 caracteres, una mayúscula y un número', () => {
@@ -26,6 +34,21 @@ describe('validadores', () => {
   it('rechaza una fecha de nacimiento futura', () => {
     expect(fechaPasada(new FormControl('2999-01-01'))).toEqual({ fechaFutura: true });
     expect(fechaPasada(new FormControl('2000-01-01'))).toBeNull();
+    expect(fechaPasada(new FormControl(hoyLocal()))).toBeNull();
+    expect(fechaPasada(new FormControl('1850-01-01'))).toEqual({ fechaAntigua: true });
+  });
+
+  it('un texto de solo espacios cuenta como vacío', () => {
+    expect(obligatorio(new FormControl('   '))).toEqual({ required: true });
+    expect(obligatorio(new FormControl(' Ana '))).toBeNull();
+  });
+
+  it('el correo necesita un dominio con punto, como en el backend', () => {
+    const control = new FormControl('', Validators.pattern(CORREO_REGEX));
+    control.setValue('ana@mail');
+    expect(control.valid).toBe(false);
+    control.setValue('ana@mail.com');
+    expect(control.valid).toBe(true);
   });
 
   it('rechaza archivos que no son imagen o pesan más de 5 MB', () => {

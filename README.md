@@ -60,6 +60,7 @@ cd frontend && npx ng test --watch=false
 | Método | Ruta | Descripción | Respuestas |
 |---|---|---|---|
 | POST | `/api/auth/registro` | `multipart/form-data` con nombre, apellido, correo, nombreUsuario, password, fechaNacimiento, descripcion e `imagenPerfil` (opcional) | 201, 400, 409 |
+| GET | `/api/auth/yo` | Datos actuales del usuario del token | 200, 401 |
 | POST | `/api/auth/login` | `{ usuario, password }`: `usuario` acepta el correo o el nombre de usuario | 200, 400, 401, 403 |
 
 | POST | `/api/publicaciones` | `multipart/form-data` con titulo, mensaje e `imagen` (opcional) | 201, 400, 401 |

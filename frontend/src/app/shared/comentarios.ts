@@ -5,7 +5,8 @@ import { Comentario } from '../core/publicacion';
 import { PublicacionesService } from '../core/publicaciones.service';
 import { Avatar } from './avatar';
 
-// los últimos comentarios de una publicación, solo lectura (escribirlos llega en el sprint 3)
+// comentarios de una publicación, los más recientes primero y de a tandas con "Ver más";
+// solo lectura (escribirlos llega en el sprint 3)
 @Component({
   selector: 'app-comentarios',
   imports: [DatePipe, Avatar],
@@ -35,7 +36,13 @@ import { Avatar } from './avatar';
         <p class="meta">Todavía nadie comentó esta publicación.</p>
       }
       @if (total() > comentarios().length) {
-        <p class="meta">y {{ total() - comentarios().length }} comentarios más</p>
+        <button type="button" class="secondary small" (click)="cargar()" [disabled]="cargandoMas()">
+          {{
+            cargandoMas()
+              ? 'Cargando…'
+              : 'Ver más comentarios (' + (total() - comentarios().length) + ')'
+          }}
+        </button>
       }
     }
   `,
@@ -61,6 +68,9 @@ import { Avatar } from './avatar';
       white-space: pre-line;
       overflow-wrap: anywhere;
     }
+    button {
+      align-self: flex-start;
+    }
     p.meta {
       margin: 0;
       color: var(--text-secondary);
@@ -77,18 +87,29 @@ export class Comentarios implements OnInit {
   protected readonly total = signal(0);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly cargandoMas = signal(false);
 
   ngOnInit() {
-    this.servicio.comentarios(this.publicacion(), 0, this.limite()).subscribe({
-      next: ({ comentarios, total }) => {
-        this.comentarios.set(comentarios);
-        this.total.set(total);
-        this.cargando.set(false);
-      },
-      error: (error) => {
-        this.error.set(`No se pudieron cargar los comentarios. ${mensajeDeError(error)}`);
-        this.cargando.set(false);
-      },
-    });
+    this.cargar();
+  }
+
+  // trae la siguiente tanda y la agrega debajo de las anteriores
+  protected cargar() {
+    this.cargandoMas.set(true);
+    this.servicio
+      .comentarios(this.publicacion(), this.comentarios().length, this.limite())
+      .subscribe({
+        next: ({ comentarios, total }) => {
+          this.comentarios.update((anteriores) => [...anteriores, ...comentarios]);
+          this.total.set(total);
+          this.cargando.set(false);
+          this.cargandoMas.set(false);
+        },
+        error: (error) => {
+          this.error.set(`No se pudieron cargar los comentarios. ${mensajeDeError(error)}`);
+          this.cargando.set(false);
+          this.cargandoMas.set(false);
+        },
+      });
   }
 }

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
@@ -26,8 +26,11 @@ export class MiPerfil {
   protected readonly error = signal<string | null>(null);
 
   constructor() {
+    this.auth.refrescarUsuario();
+    // depende solo del id: refrescar los datos del usuario no vuelve a pedir las publicaciones
+    const idUsuario = computed(() => this.auth.usuario()?._id);
     effect(() => {
-      if (this.auth.usuario()) untracked(() => this.cargar());
+      if (idUsuario()) untracked(() => this.cargar());
     });
   }
 

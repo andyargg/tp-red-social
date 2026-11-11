@@ -221,4 +221,61 @@ describe('Auth (e2e)', () => {
         .expect(200);
     });
   });
+
+  describe('casos borde', () => {
+    it('rechaza una fecha de nacimiento futura con 400', async () => {
+      const res = await registrar(app, {
+        ...datosValidos,
+        correo: 'futuro@mail.com',
+        nombreUsuario: 'futuro',
+        fechaNacimiento: '2099-01-01',
+      }).expect(400);
+      expect(res.body.message).toEqual([
+        'La fecha de nacimiento no puede ser futura ni anterior a 1900',
+      ]);
+    });
+
+    it('una imagen de más de 5 MB responde 413 con el mensaje en español', async () => {
+      const res = await registrar(
+        app,
+        { ...datosValidos, correo: 'pesada@mail.com', nombreUsuario: 'pesada' },
+        Buffer.alloc(6 * 1024 * 1024),
+      ).expect(413);
+      expect(res.body.message).toBe('La imagen puede pesar hasta 5 MB');
+    });
+
+    it('dos registros iguales al mismo tiempo: uno 201 y el otro 409', async () => {
+      const datos = {
+        ...datosValidos,
+        correo: 'doble@mail.com',
+        nombreUsuario: 'doble',
+      };
+      const estados = await Promise.all([
+        registrar(app, datos).then((r) => r.status),
+        registrar(app, datos).then((r) => r.status),
+      ]);
+      expect(estados.sort()).toEqual([201, 409]);
+    });
+
+    it('GET /api/auth/yo devuelve los datos actuales del usuario del token', async () => {
+      const { body } = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ usuario: 'carla', password: 'Secreta123' })
+        .expect(200);
+      expect(body.usuario.perfil).toBe('usuario');
+      await app.get(UsuariosService).cambiarPerfil('carla', 'administrador');
+
+      const res = await request(app.getHttpServer())
+        .get('/api/auth/yo')
+        .set('Authorization', `Bearer ${body.token}`)
+        .expect(200);
+      expect(res.body).toMatchObject({
+        nombreUsuario: 'carla',
+        perfil: 'administrador',
+      });
+      expect(res.body.password).toBeUndefined();
+
+      await request(app.getHttpServer()).get('/api/auth/yo').expect(401);
+    });
+  });
 });

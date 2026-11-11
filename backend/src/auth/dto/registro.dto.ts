@@ -7,6 +7,7 @@ import {
   Matches,
   MaxLength,
 } from 'class-validator';
+import { FechaPasada } from '../../validacion/fecha-pasada.js';
 import { Recortar } from '../../validacion/recortar.js';
 import { PASSWORD_REGEX, PASSWORD_MENSAJE } from './password.js';
 
@@ -39,6 +40,9 @@ export class RegistroDto {
   @Matches(PASSWORD_REGEX, { message: PASSWORD_MENSAJE })
   password: string;
 
+  @FechaPasada({
+    message: 'La fecha de nacimiento no puede ser futura ni anterior a 1900',
+  })
   @IsDateString({}, { message: 'La fecha de nacimiento no es válida' })
   fechaNacimiento: string;
 

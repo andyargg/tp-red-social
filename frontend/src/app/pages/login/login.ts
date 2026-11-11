@@ -5,7 +5,7 @@ import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
 import { Icono } from '../../shared/icono';
 import { ModalService } from '../../shared/modal/modal.service';
-import { PASSWORD_REGEX } from '../../shared/validadores';
+import { PASSWORD_REGEX, obligatorio } from '../../shared/validadores';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,7 @@ export class Login {
   protected readonly verPassword = signal(false);
 
   protected readonly form = inject(NonNullableFormBuilder).group({
-    usuario: ['', [Validators.required]],
+    usuario: ['', [obligatorio]],
     password: ['', [Validators.required, Validators.pattern(PASSWORD_REGEX)]],
   });
 

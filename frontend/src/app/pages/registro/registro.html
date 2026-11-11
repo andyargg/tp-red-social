@@ -109,13 +109,21 @@
 
         <div>
           <label for="fechaNacimiento">Fecha de nacimiento</label>
-          <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" [max]="hoy" />
+          <input
+            id="fechaNacimiento"
+            type="date"
+            formControlName="fechaNacimiento"
+            [min]="fechaMinima"
+            [max]="hoy"
+          />
           @if (invalido('fechaNacimiento')) {
             <p class="campo-error">
               {{
                 form.controls.fechaNacimiento.errors?.['fechaFutura']
                   ? 'La fecha no puede ser futura.'
-                  : 'Ingresá tu fecha de nacimiento.'
+                  : form.controls.fechaNacimiento.errors?.['fechaAntigua']
+                    ? 'La fecha no puede ser anterior a 1900.'
+                    : 'Ingresá tu fecha de nacimiento.'
               }}
             </p>
           }

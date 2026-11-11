@@ -1,15 +1,20 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { opcionesImagen } from '../imagenes/opciones-imagen.js';
 import { AuthService } from './auth.service.js';
+import { JwtGuard } from './jwt.guard.js';
+import type { PayloadToken } from './payload-token.js';
+import { UsuarioToken } from './payload-token.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegistroDto } from './dto/registro.dto.js';
 
@@ -31,5 +36,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   login(@Body() dto: LoginDto) {
     return this.auth.login(dto);
+  }
+
+  // el front lo usa para refrescar los datos guardados al iniciar sesión
+  @Get('yo')
+  @UseGuards(JwtGuard)
+  yo(@UsuarioToken() usuario: PayloadToken) {
+    return this.auth.yo(usuario.sub);
   }
 }
