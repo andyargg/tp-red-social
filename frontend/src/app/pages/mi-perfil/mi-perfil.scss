@@ -1,6 +1,16 @@
 .perfil { max-width: 48rem; margin: 0 auto; }
 
-.hero { display: flex; gap: 1.25rem; align-items: center; }
+.hero {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  // borde superior naranja como detalle de la tarjeta principal
+  border-top: 3px solid var(--accent);
+}
+// anillo naranja alrededor de la foto
+.hero app-avatar {
+  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 0 5px var(--accent);
+}
 .identidad { min-width: 0; }
 .nombre { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
 .nombre h2 { margin: 0; font-size: 22px; }

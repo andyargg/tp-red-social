@@ -17,8 +17,8 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0 0.75rem 1.25rem;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text-primary);
   text-decoration: none;
@@ -45,7 +45,7 @@ nav a.activo::before {
   bottom: 0.35rem;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background: var(--cobalt);
+  background: var(--accent);
 }
 
 .pie { margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem; padding: 0 0.25rem; }
@@ -69,6 +69,7 @@ nav a.activo::before {
   background: var(--bg-surface);
   border-color: var(--border);
   color: var(--danger);
+  --sombra-boton: none;
 }
 .salir:hover { background: var(--danger-bg); }
 

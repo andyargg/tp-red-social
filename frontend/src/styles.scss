@@ -29,7 +29,15 @@
   --danger-bg: #fef2f2;
   --danger-border: #fecaca;
 
-  --card-gradient: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+  // tercer color: naranja, solo para detalles (el texto usa el tono más oscuro por contraste)
+  --accent: #ea580c;
+  --accent-text: #c2410c;
+  --accent-bg: #fff7ed;
+  --accent-border: rgb(234 88 12 / 0.3);
+  --shadow-hover: 0 1px 2px 0 rgb(15 23 42 / 0.05), 0 12px 24px -10px rgb(15 23 42 / 0.18);
+  // relieve del botón principal al pasar el mouse; los demás botones lo apagan con "none"
+  --sombra-boton: 0 6px 14px -6px rgb(15 23 42 / 0.45);
+
   --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05), 0 1px 3px 0 rgb(15 23 42 / 0.04),
     0 6px 16px -6px rgb(15 23 42 / 0.08);
   --font-sans: Inter, 'Geist Sans', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI',
@@ -45,6 +53,10 @@ body {
   background: var(--bg-app);
   color: var(--text-primary);
 }
+::selection { background: rgb(234 88 12 / 0.2); }
+
+// la marca: "Social" en el color del texto e "ito" en naranja
+.marca-ito { color: var(--accent); }
 
 h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 1rem; }
 h2 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin: 1.5rem 0 0.75rem; }
@@ -79,9 +91,14 @@ button, .button {
   font-size: 15px;
   text-decoration: none;
   cursor: pointer;
-  transition: background 150ms, border-color 150ms;
+  transition: background 150ms, border-color 150ms, box-shadow 150ms, transform 150ms;
 }
 button:hover, .button:hover { background: var(--primary-hover); }
+button:not(:disabled):hover, .button:hover { box-shadow: var(--sombra-boton); }
+button.secondary, .button.secondary, button.danger, .button.danger, button.ghost-danger {
+  --sombra-boton: none;
+}
+button:active:not(:disabled), .button:active { transform: translateY(1px); }
 button:disabled { opacity: 0.55; cursor: not-allowed; }
 button.secondary, .button.secondary {
   background: var(--bg-surface);
@@ -100,13 +117,15 @@ button.ghost-danger:hover { background: var(--danger-bg); border-color: var(--da
 button.small, .button.small { padding: 0.3rem 0.7rem; }
 
 .card {
-  background: var(--card-gradient);
+  background: var(--bg-surface);
   border: 1px solid var(--border-soft);
   border-radius: 12px;
   box-shadow: var(--shadow-sm);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  transition: border-color 200ms, box-shadow 200ms;
+  transition: border-color 200ms, box-shadow 200ms, transform 200ms;
+  // "backwards": la animación no retiene el transform final y no pisa el del hover
+  animation: aparecer 300ms ease-out backwards;
 }
 .card:hover { border-color: var(--border-soft-hover); }
 
@@ -129,6 +148,8 @@ dialog {
   background: var(--bg-surface);
   color: var(--text-primary);
   box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+  // un título largo en el mensaje no debe ensanchar el modal
+  overflow-wrap: anywhere;
 }
 dialog::backdrop { background: rgb(15 23 42 / 0.4); }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; }
@@ -154,3 +175,13 @@ dialog::backdrop { background: rgb(15 23 42 / 0.4); }
 .badge-danger::before { background: #f43f5e; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes aparecer { from { opacity: 0; transform: translateY(6px); } }
+
+// quien pidió menos movimiento en el sistema no ve animaciones
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

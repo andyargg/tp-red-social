@@ -1,6 +1,16 @@
 // encabezado de página y estado vacío, compartidos por las pantallas internas
 .page-header { margin-bottom: 1.25rem; }
 .page-header h1 { margin: 0 0 0.25rem; }
+// rayita naranja debajo del título de cada página
+.page-header h1::after {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 4px;
+  margin-top: 0.4rem;
+  border-radius: 9999px;
+  background: var(--accent);
+}
 .page-header p { margin: 0; }
 
 .vacio {
@@ -18,7 +28,7 @@
   display: inline-flex;
   padding: 0.6rem;
   border-radius: 8px;
-  background: var(--bg-subtle);
-  color: var(--text-primary);
+  background: var(--accent-bg);
+  color: var(--accent-text);
 }
 .acciones { display: flex; gap: 0.5rem; margin-top: 0.5rem; }

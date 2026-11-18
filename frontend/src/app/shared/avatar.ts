@@ -23,9 +23,9 @@ import { Icono } from './icono';
       flex-shrink: 0;
       overflow: hidden;
       border-radius: 8px;
-      background: var(--cobalt-bg);
-      color: var(--cobalt);
-      box-shadow: inset 0 0 0 1px rgb(37 99 235 / 0.25);
+      /* las iniciales van en blanco sobre el cobalto */
+      background: var(--cobalt);
+      color: #ffffff;
       font-weight: 600;
     }
     :host(.avatar-sm) {

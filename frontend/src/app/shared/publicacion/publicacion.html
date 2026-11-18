@@ -38,6 +38,8 @@
       type="button"
       class="secondary small me-gusta"
       [class.activo]="p.meGustaYo"
+      [class.latido]="latido()"
+      (animationend)="latido.set(false)"
       [attr.aria-pressed]="p.meGustaYo"
       (click)="alternarMeGusta()"
       [disabled]="procesando()"

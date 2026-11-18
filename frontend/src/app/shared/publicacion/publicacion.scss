@@ -1,11 +1,32 @@
-.publicacion { padding: 1.25rem; margin-bottom: 1rem; }
+// el hover se escucha en el host (que no se mueve) para que la tarjeta no titile al levantarse
+:host { display: block; }
+
+.publicacion { position: relative; padding: 1.25rem; margin-bottom: 1rem; }
+// al pasar el mouse la tarjeta se levanta y aparece una línea naranja arriba
+.publicacion::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  border-radius: 11px 11px 0 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 200ms;
+}
+:host(:hover) .publicacion {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--accent-border);
+}
+:host(:hover) .publicacion::before { opacity: 1; }
 
 header { display: flex; align-items: center; gap: 0.75rem; }
 .autor { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .autor strong, .autor .meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 header button { padding: 0.4rem; }
 
-h3 { margin: 1rem 0 0.35rem; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+// overflow-wrap corta las palabras largas sin espacios (ej. "aaaa…") para que no se salgan de la tarjeta
+h3 { margin: 1rem 0 0.35rem; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; overflow-wrap: anywhere; }
 .mensaje { margin: 0; color: var(--text-primary); white-space: pre-line; overflow-wrap: anywhere; }
 
 .imagen {
@@ -27,6 +48,9 @@ footer { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
   background: rgb(244 63 94 / 0.08);
 }
 .me-gusta.activo:hover { background: rgb(244 63 94 / 0.14); }
+// el corazón "late" solo cuando el usuario acaba de dar me gusta
+.me-gusta.latido app-icono { animation: latido 350ms ease-out; }
+@keyframes latido { 40% { transform: scale(1.35); } }
 .contador { display: inline-flex; align-items: center; gap: 0.35rem; }
 
 .sr-only {

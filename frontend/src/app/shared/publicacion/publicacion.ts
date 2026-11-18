@@ -28,6 +28,8 @@ export class PublicacionCard {
   // copia local que se actualiza con la respuesta del me gusta
   protected readonly datos = linkedSignal(() => this.publicacion());
   protected readonly procesando = signal(false);
+  // true solo un instante después de dar me gusta, para animar el corazón
+  protected readonly latido = signal(false);
   protected readonly esMia = computed(() => this.auth.usuario()?._id === this.datos().autor._id);
   protected readonly puedoEliminar = computed(
     () => this.esMia() || this.auth.usuario()?.perfil === 'administrador',
@@ -41,6 +43,7 @@ export class PublicacionCard {
       next: (actualizada) => {
         this.datos.set(actualizada);
         this.procesando.set(false);
+        this.latido.set(actualizada.meGustaYo);
       },
       error: (error) => {
         this.procesando.set(false);

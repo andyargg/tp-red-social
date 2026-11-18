@@ -5,6 +5,8 @@
   <input id="titulo" formControlName="titulo" maxlength="100" />
   @if (invalido('titulo')) {
     <p class="campo-error">Ingresá un título (hasta 100 caracteres).</p>
+  } @else {
+    <p class="ayuda contador">{{ form.controls.titulo.value.length }}/100</p>
   }
 
   <label for="mensaje">Mensaje</label>
