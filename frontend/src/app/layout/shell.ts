@@ -16,10 +16,6 @@ export class Shell {
   private readonly router = inject(Router);
   private readonly modal = inject(ModalService);
 
-  constructor() {
-    this.auth.refrescarUsuario();
-  }
-
   protected async cerrarSesion() {
     this.auth.cerrarSesion();
     await this.router.navigateByUrl('/login');

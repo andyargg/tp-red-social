@@ -12,7 +12,6 @@ const imagenesFalso = crearImagenesFalso();
 describe('Publicaciones (e2e)', () => {
   let app: NestExpressApplication;
   let cerrar: () => Promise<void>;
-  // tokens y ids de los usuarios de prueba
   const ana = { token: '', id: '' };
   const beto = { token: '', id: '' };
 
@@ -72,7 +71,7 @@ describe('Publicaciones (e2e)', () => {
         titulo: 'Primera',
         mensaje: 'Mensaje de Primera',
         imagen:
-          'https://res.cloudinary.com/test/image/upload/red-social/publicaciones/foto.png',
+          'https://res.cloudinary.com/test/image/upload/red-social/publicaciones/foto1.png',
         autor: { _id: ana.id, nombreUsuario: 'ana' },
         cantidadMeGusta: 0,
         meGustaYo: false,
@@ -102,7 +101,6 @@ describe('Publicaciones (e2e)', () => {
   });
 
   describe('GET /api/publicaciones', () => {
-    // publicaciones: Primera (ana), Sin foto (beto), luego tres más de ana
     beforeAll(async () => {
       for (const titulo of ['Tercera', 'Cuarta', 'Quinta']) {
         await publicar(ana.token, titulo).expect(201);
@@ -273,7 +271,6 @@ describe('Publicaciones (e2e)', () => {
     it('un administrador puede eliminar cualquier publicación', async () => {
       const id = (await publicar(beto.token, 'Moderada')).body._id;
       await app.get(UsuariosService).cambiarPerfil('ana', 'administrador');
-      // el perfil viaja en el token: hay que volver a ingresar
       const login = await api()
         .post('/api/auth/login')
         .send({ usuario: 'ana', password: 'Secreta123' })

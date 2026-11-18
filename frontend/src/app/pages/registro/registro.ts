@@ -14,8 +14,8 @@ import {
   coinciden,
   fechaPasada,
   hoyLocal,
-  imagenValida,
   obligatorio,
+  problemaDeImagen,
 } from '../../shared/validadores';
 
 @Component({
@@ -32,6 +32,7 @@ export class Registro {
 
   protected readonly enviando = signal(false);
   protected readonly vistaPrevia = signal<string | null>(null);
+  protected readonly errorImagen = signal<string | null>(null);
   protected readonly hoy = hoyLocal();
   protected readonly fechaMinima = FECHA_MINIMA;
 
@@ -45,7 +46,7 @@ export class Registro {
       repetirPassword: ['', [Validators.required]],
       fechaNacimiento: ['', [Validators.required, fechaPasada]],
       descripcion: ['', [Validators.maxLength(200)]],
-      imagenPerfil: this.fb.control<File | null>(null, [imagenValida]),
+      imagenPerfil: this.fb.control<File | null>(null),
     },
     { validators: coinciden('password', 'repetirPassword') },
   );
@@ -56,14 +57,18 @@ export class Registro {
   }
 
   protected elegirImagen(evento: Event) {
-    const archivo = (evento.target as HTMLInputElement).files?.[0] ?? null;
-    const control = this.form.controls.imagenPerfil;
-    control.setValue(archivo);
-    control.markAsTouched();
+    const input = evento.target as HTMLInputElement;
+    const archivo = input.files?.[0] ?? null;
+    input.value = '';
+    if (!archivo) return;
+    const problema = problemaDeImagen(archivo);
+    this.errorImagen.set(problema);
+    const valido = problema ? null : archivo;
 
+    this.form.controls.imagenPerfil.setValue(valido);
     const anterior = this.vistaPrevia();
     if (anterior) URL.revokeObjectURL(anterior);
-    this.vistaPrevia.set(archivo && control.valid ? URL.createObjectURL(archivo) : null);
+    this.vistaPrevia.set(valido ? URL.createObjectURL(valido) : null);
   }
 
   protected registrarse() {
@@ -73,7 +78,6 @@ export class Registro {
     }
     const { repetirPassword, imagenPerfil, ...datos } = this.form.getRawValue();
     const formData = new FormData();
-    // la contraseña va tal cual: los espacios son parte de ella
     for (const [campo, valor] of Object.entries(datos)) {
       formData.append(campo, campo === 'password' ? valor : valor.trim());
     }

@@ -6,11 +6,15 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
+import { UsuarioDocument } from '../usuarios/usuario.schema.js';
 import { UsuariosService } from '../usuarios/usuarios.service.js';
 import { PayloadToken } from './payload-token.js';
 
-// exige un header "Authorization: Bearer <token>" válido y no vencido, de un usuario
-// que siga habilitado; el perfil se toma de la base para que un cambio rija enseguida
+export type RequestConUsuario = Request & {
+  usuario?: PayloadToken;
+  documentoUsuario?: UsuarioDocument;
+};
+
 @Injectable()
 export class JwtGuard implements CanActivate {
   constructor(
@@ -19,9 +23,7 @@ export class JwtGuard implements CanActivate {
   ) {}
 
   async canActivate(ctx: ExecutionContext) {
-    const req = ctx
-      .switchToHttp()
-      .getRequest<Request & { usuario?: PayloadToken }>();
+    const req = ctx.switchToHttp().getRequest<RequestConUsuario>();
     const [tipo, token] = req.headers.authorization?.split(' ') ?? [];
     if (tipo !== 'Bearer' || !token) {
       throw new UnauthorizedException('Tenés que iniciar sesión');
@@ -41,6 +43,7 @@ export class JwtGuard implements CanActivate {
       );
     }
     req.usuario = { ...payload, perfil: usuario.perfil };
+    req.documentoUsuario = usuario;
     return true;
   }
 }

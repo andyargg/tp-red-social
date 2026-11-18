@@ -1,5 +1,4 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
 import { Orden, Publicacion } from '../../core/publicacion';
@@ -12,7 +11,7 @@ const POR_PAGINA = 5;
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [RouterLink, Icono, PublicacionCard, NuevaPublicacion],
+  imports: [Icono, PublicacionCard, NuevaPublicacion],
   templateUrl: './publicaciones.html',
   styleUrls: ['../vacio.scss', './publicaciones.scss'],
 })
@@ -28,13 +27,11 @@ export class Publicaciones {
   protected readonly error = signal<string | null>(null);
   protected readonly escribiendo = signal(false);
 
-  // cada pedido tiene un número: si llega una respuesta vieja (otro orden u otra página), se descarta
   private ultimoPedido = 0;
 
   protected readonly paginas = computed(() => Math.max(1, Math.ceil(this.total() / POR_PAGINA)));
 
   constructor() {
-    // vuelve a pedir el listado cada vez que cambia el orden, la página o la sesión
     effect(() => {
       const orden = this.orden();
       const pagina = this.pagina();
@@ -54,7 +51,6 @@ export class Publicaciones {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // la nueva publicación es la más reciente: se muestra la primera página por fecha
   protected alPublicar() {
     this.escribiendo.set(false);
     if (this.orden() === 'fecha' && this.pagina() === 1) this.recargar();
@@ -63,7 +59,6 @@ export class Publicaciones {
   }
 
   protected alEliminar() {
-    // si era la única de la última página, retrocede una
     if (this.publicaciones().length === 1 && this.pagina() > 1) {
       this.pagina.update((p) => p - 1);
     } else {
@@ -84,7 +79,6 @@ export class Publicaciones {
       .subscribe({
         next: ({ publicaciones, total }) => {
           if (pedido !== this.ultimoPedido) return;
-          // si la página dejó de existir (se eliminaron publicaciones), va a la última
           const ultima = Math.max(1, Math.ceil(total / POR_PAGINA));
           if (pagina > ultima) {
             this.pagina.set(ultima);

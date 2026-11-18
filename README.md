@@ -60,14 +60,22 @@ cd frontend && npx ng test --watch=false
 | Método | Ruta | Descripción | Respuestas |
 |---|---|---|---|
 | POST | `/api/auth/registro` | `multipart/form-data` con nombre, apellido, correo, nombreUsuario, password, fechaNacimiento, descripcion e `imagenPerfil` (opcional) | 201, 400, 409 |
-| GET | `/api/auth/yo` | Datos actuales del usuario del token | 200, 401 |
 | POST | `/api/auth/login` | `{ usuario, password }`: `usuario` acepta el correo o el nombre de usuario | 200, 400, 401, 403 |
-
+| POST | `/api/auth/autorizar` | Valida el token y devuelve los datos actuales del usuario | 200, 401 |
+| POST | `/api/auth/refrescar` | Con un token válido devuelve `{ token }`: el mismo payload y 15 minutos más | 200, 401 |
+| PATCH | `/api/usuarios/yo` | `multipart/form-data` con los campos a cambiar (nombre, apellido, fechaNacimiento, descripcion), `imagenPerfil` (opcional) o `quitarImagen=true`. El correo y el nombre de usuario no cambian | 200, 400, 401 |
 | POST | `/api/publicaciones` | `multipart/form-data` con titulo, mensaje e `imagen` (opcional) | 201, 400, 401 |
 | GET | `/api/publicaciones` | Query: `orden` (`fecha` o `meGusta`), `usuario` (id del autor), `offset`, `limit` (máx. 50). Devuelve `{ publicaciones, total, offset, limit }` | 200, 400, 401 |
+| GET | `/api/publicaciones/:id` | Una publicación con su autor y contadores | 200, 400, 401, 404 |
 | DELETE | `/api/publicaciones/:id` | Baja lógica. Solo el autor o un administrador | 204, 401, 403, 404 |
 | POST | `/api/publicaciones/:id/me-gusta` | Da me gusta (uno por usuario) | 201, 401, 404, 409 |
 | DELETE | `/api/publicaciones/:id/me-gusta` | Quita el me gusta, solo si se había dado | 200, 401, 404, 409 |
 | GET | `/api/publicaciones/:id/comentarios` | Query: `offset`, `limit`. Los más recientes primero | 200, 400, 401, 404 |
+| POST | `/api/publicaciones/:id/comentarios` | `{ mensaje }` (hasta 500 caracteres). Guarda el autor y la fecha | 201, 400, 401, 404 |
+| PUT | `/api/publicaciones/:id/comentarios/:comentarioId` | `{ mensaje }`. Solo el autor; marca `modificado: true` | 200, 400, 401, 403, 404 |
 
-Las rutas de auth devuelven `{ usuario, token }`. El token es un JWT que vence a los 15 minutos. Las rutas de publicaciones exigen el header `Authorization: Bearer <token>` de un usuario habilitado.
+Registro y login devuelven `{ usuario, token }`. El token es un JWT que vence a los 15 minutos. Las demás rutas (salvo registro y login) exigen el header `Authorization: Bearer <token>` de un usuario habilitado.
+
+## Créditos
+
+Los íconos son de [Lucide](https://lucide.dev) (licencia ISC).

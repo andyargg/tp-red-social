@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-// convierte un error de la API en un texto para mostrarle al usuario
 export function mensajeDeError(error: unknown): string {
   if (!(error instanceof HttpErrorResponse)) return 'Ocurrió un error inesperado.';
   if (error.status === 0) {

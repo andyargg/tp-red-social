@@ -1,7 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { Icono } from './icono';
 
-// foto de perfil, o las iniciales si el usuario no subió una
 @Component({
   selector: 'app-avatar',
   imports: [Icono],
@@ -23,7 +22,6 @@ import { Icono } from './icono';
       flex-shrink: 0;
       overflow: hidden;
       border-radius: 8px;
-      /* las iniciales van en blanco sobre el cobalto */
       background: var(--cobalt);
       color: #ffffff;
       font-weight: 600;

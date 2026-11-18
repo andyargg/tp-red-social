@@ -25,14 +25,8 @@
             accept="image/jpeg,image/png,image/webp,image/gif"
             (change)="elegirImagen($event)"
           />
-          @if (form.controls.imagenPerfil.errors; as errores) {
-            <p class="campo-error">
-              @if (errores['tipoImagen']) {
-                La imagen debe ser JPG, PNG, WEBP o GIF.
-              } @else {
-                La imagen puede pesar hasta 5 MB.
-              }
-            </p>
+          @if (errorImagen(); as error) {
+            <p class="campo-error">{{ error }}</p>
           } @else {
             <p class="ayuda">Opcional. JPG, PNG, WEBP o GIF de hasta 5 MB.</p>
           }

@@ -1,0 +1,90 @@
+<form class="card" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+  <h2>Editar perfil</h2>
+
+  <div class="foto">
+    <app-avatar
+      [nombre]="form.controls.nombre.value + ' ' + form.controls.apellido.value"
+      [imagen]="foto()"
+      tamanio="lg"
+    />
+    <div>
+      <div class="botones-foto">
+        <label class="button secondary small elegir" for="editarImagenPerfil">
+          <app-icono nombre="imagen" />{{ foto() ? 'Cambiar foto' : 'Elegir foto' }}
+        </label>
+        @if (foto()) {
+          <button type="button" class="ghost-danger small" (click)="quitarFoto()">
+            <app-icono nombre="basura" [tamanio]="14" />Quitar foto
+          </button>
+        }
+      </div>
+      <input
+        id="editarImagenPerfil"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        (change)="elegirImagen($event)"
+      />
+      @if (errorImagen(); as error) {
+        <p class="campo-error">{{ error }}</p>
+      } @else {
+        <p class="ayuda">JPG, PNG, WEBP o GIF de hasta 5 MB.</p>
+      }
+    </div>
+  </div>
+
+  <div class="grilla">
+    <div>
+      <label for="editarNombre">Nombre</label>
+      <input id="editarNombre" formControlName="nombre" autocomplete="given-name" />
+      @if (invalido('nombre')) {
+        <p class="campo-error">Ingresá tu nombre (hasta 50 caracteres).</p>
+      }
+    </div>
+    <div>
+      <label for="editarApellido">Apellido</label>
+      <input id="editarApellido" formControlName="apellido" autocomplete="family-name" />
+      @if (invalido('apellido')) {
+        <p class="campo-error">Ingresá tu apellido (hasta 50 caracteres).</p>
+      }
+    </div>
+    <div>
+      <label for="editarFecha">Fecha de nacimiento</label>
+      <input
+        id="editarFecha"
+        type="date"
+        formControlName="fechaNacimiento"
+        [min]="fechaMinima"
+        [max]="hoy"
+      />
+      @if (invalido('fechaNacimiento')) {
+        <p class="campo-error">
+          {{
+            form.controls.fechaNacimiento.errors?.['fechaFutura']
+              ? 'La fecha no puede ser futura.'
+              : form.controls.fechaNacimiento.errors?.['fechaAntigua']
+                ? 'La fecha no puede ser anterior a 1900.'
+                : 'Ingresá tu fecha de nacimiento.'
+          }}
+        </p>
+      }
+    </div>
+  </div>
+
+  <label for="editarDescripcion">Descripción breve</label>
+  <textarea
+    id="editarDescripcion"
+    rows="3"
+    formControlName="descripcion"
+    maxlength="200"
+  ></textarea>
+  <p class="ayuda contador">{{ form.controls.descripcion.value.length }}/200</p>
+
+  <p class="ayuda">El correo y el nombre de usuario no se pueden cambiar.</p>
+
+  <div class="acciones-form">
+    <button type="button" class="secondary" (click)="cancelado.emit()">Cancelar</button>
+    <button type="submit" [disabled]="enviando()">
+      <app-icono nombre="check" />{{ enviando() ? 'Guardando…' : 'Guardar cambios' }}
+    </button>
+  </div>
+</form>

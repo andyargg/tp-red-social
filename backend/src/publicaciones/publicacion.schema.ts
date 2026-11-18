@@ -27,7 +27,6 @@ export class Publicacion {
   })
   meGusta: Types.ObjectId[];
 
-  // baja lógica
   @Prop({ type: Boolean, default: true })
   activa: boolean;
 }

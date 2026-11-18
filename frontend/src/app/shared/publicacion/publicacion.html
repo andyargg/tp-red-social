@@ -1,5 +1,5 @@
 @let p = datos();
-<article class="card publicacion">
+<article class="card publicacion" [class.grande]="grande()">
   <header>
     <app-avatar
       [nombre]="p.autor.nombre + ' ' + p.autor.apellido"
@@ -27,7 +27,13 @@
     }
   </header>
 
-  <h3>{{ p.titulo }}</h3>
+  @if (grande()) {
+    <h1 class="titulo">{{ p.titulo }}</h1>
+  } @else {
+    <h3 class="titulo">
+      <a [routerLink]="['/publicaciones', p._id]">{{ p.titulo }}</a>
+    </h3>
+  }
   <p class="mensaje">{{ p.mensaje }}</p>
   @if (p.imagen) {
     <img class="imagen" [src]="p.imagen" [alt]="'Imagen de ' + p.titulo" loading="lazy" />
@@ -49,11 +55,19 @@
       <span class="num">{{ p.cantidadMeGusta }}</span>
       <span class="sr-only">me gusta</span>
     </button>
-    <span class="meta contador">
-      <app-icono nombre="comentario" [tamanio]="15" />
-      <span class="num">{{ p.cantidadComentarios }}</span>
-      {{ p.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
-    </span>
+    @if (grande()) {
+      <span class="meta contador">
+        <app-icono nombre="comentario" [tamanio]="15" />
+        <span class="num">{{ p.cantidadComentarios }}</span>
+        {{ p.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+      </span>
+    } @else {
+      <a class="meta contador" [routerLink]="['/publicaciones', p._id]">
+        <app-icono nombre="comentario" [tamanio]="15" />
+        <span class="num">{{ p.cantidadComentarios }}</span>
+        {{ p.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+      </a>
+    }
   </footer>
 
   <ng-content />

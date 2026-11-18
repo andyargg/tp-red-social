@@ -7,22 +7,28 @@ import { ModalService } from '../shared/modal/modal.service';
 import { AuthService } from './auth.service';
 import { mensajeDeError } from './errores';
 
-// agrega el token a las peticiones a la API; si vence, manda a ingresar de nuevo
+const SIN_REDIRECCION = [`${environment.apiUrl}/auth/login`, `${environment.apiUrl}/auth/registro`];
+
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const router = inject(Router);
   const modal = inject(ModalService);
 
-  const token = auth.token;
+  const token = auth.token();
   const aLaApi = req.url.startsWith(environment.apiUrl);
   const pedido =
     token && aLaApi ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
   return next(pedido).pipe(
     catchError((error: unknown) => {
-      // el login con datos incorrectos también da 401, pero ese error lo maneja su pantalla
-      const esLogin = req.url.startsWith(`${environment.apiUrl}/auth`);
-      if (error instanceof HttpErrorResponse && error.status === 401 && aLaApi && !esLogin) {
+      if (
+        error instanceof HttpErrorResponse &&
+        error.status === 401 &&
+        aLaApi &&
+        !SIN_REDIRECCION.includes(req.url) &&
+        token !== null &&
+        auth.token() === token
+      ) {
         auth.cerrarSesion();
         router.navigateByUrl('/login').then(() =>
           modal.abrir({

@@ -5,8 +5,8 @@ import {
   coinciden,
   fechaPasada,
   hoyLocal,
-  imagenValida,
   obligatorio,
+  problemaDeImagen,
 } from './validadores';
 
 describe('validadores', () => {
@@ -56,8 +56,8 @@ describe('validadores', () => {
     const pesada = new File([new Uint8Array(6 * 1024 * 1024)], 'foto.png', { type: 'image/png' });
     const valida = new File(['x'], 'foto.png', { type: 'image/png' });
 
-    expect(imagenValida(new FormControl(texto))).toEqual({ tipoImagen: true });
-    expect(imagenValida(new FormControl(pesada))).toEqual({ imagenPesada: true });
-    expect(imagenValida(new FormControl(valida))).toBeNull();
+    expect(problemaDeImagen(texto)).toBe('La imagen debe ser JPG, PNG, WEBP o GIF.');
+    expect(problemaDeImagen(pesada)).toBe('La imagen puede pesar hasta 5 MB.');
+    expect(problemaDeImagen(valida)).toBeNull();
   });
 });

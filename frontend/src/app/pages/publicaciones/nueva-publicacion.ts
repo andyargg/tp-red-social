@@ -5,7 +5,7 @@ import { Publicacion } from '../../core/publicacion';
 import { PublicacionesService } from '../../core/publicaciones.service';
 import { Icono } from '../../shared/icono';
 import { ModalService } from '../../shared/modal/modal.service';
-import { imagenValida, obligatorio } from '../../shared/validadores';
+import { obligatorio, problemaDeImagen } from '../../shared/validadores';
 
 @Component({
   selector: 'app-nueva-publicacion',
@@ -23,15 +23,15 @@ export class NuevaPublicacion {
 
   protected readonly enviando = signal(false);
   protected readonly vistaPrevia = signal<string | null>(null);
+  protected readonly errorImagen = signal<string | null>(null);
 
   protected readonly form = this.fb.group({
     titulo: ['', [obligatorio, Validators.maxLength(100)]],
     mensaje: ['', [obligatorio, Validators.maxLength(1000)]],
-    imagen: this.fb.control<File | null>(null, [imagenValida]),
+    imagen: this.fb.control<File | null>(null),
   });
 
   constructor() {
-    // al cancelar se destruye el formulario: libera la vista previa
     inject(DestroyRef).onDestroy(() => {
       const vista = this.vistaPrevia();
       if (vista) URL.revokeObjectURL(vista);
@@ -45,19 +45,20 @@ export class NuevaPublicacion {
 
   protected elegirImagen(evento: Event) {
     const input = evento.target as HTMLInputElement;
-    this.cambiarImagen(input.files?.[0] ?? null);
-    // permite volver a elegir el mismo archivo después de quitarlo
+    const archivo = input.files?.[0] ?? null;
     input.value = '';
+    if (!archivo) return;
+    const problema = problemaDeImagen(archivo);
+    this.cambiarImagen(problema ? null : archivo);
+    this.errorImagen.set(problema);
   }
 
   protected cambiarImagen(archivo: File | null) {
-    const control = this.form.controls.imagen;
-    control.setValue(archivo);
-    control.markAsTouched();
-
+    this.form.controls.imagen.setValue(archivo);
+    if (!archivo) this.errorImagen.set(null);
     const anterior = this.vistaPrevia();
     if (anterior) URL.revokeObjectURL(anterior);
-    this.vistaPrevia.set(archivo && control.valid ? URL.createObjectURL(archivo) : null);
+    this.vistaPrevia.set(archivo ? URL.createObjectURL(archivo) : null);
   }
 
   protected publicar() {
@@ -77,7 +78,6 @@ export class NuevaPublicacion {
         this.enviando.set(false);
         this.form.reset();
         this.cambiarImagen(null);
-        this.form.controls.imagen.markAsUntouched();
         this.creada.emit(publicacion);
         this.modal.abrir({
           tipo: 'exito',

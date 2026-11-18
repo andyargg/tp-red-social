@@ -9,10 +9,11 @@ import { Avatar } from '../../shared/avatar';
 import { Comentarios } from '../../shared/comentarios';
 import { Icono } from '../../shared/icono';
 import { PublicacionCard } from '../../shared/publicacion/publicacion';
+import { EditarPerfil } from './editar-perfil';
 
 @Component({
   selector: 'app-mi-perfil',
-  imports: [RouterLink, DatePipe, Avatar, Icono, PublicacionCard, Comentarios],
+  imports: [RouterLink, DatePipe, Avatar, Icono, PublicacionCard, Comentarios, EditarPerfil],
   templateUrl: './mi-perfil.html',
   styleUrls: ['../vacio.scss', './mi-perfil.scss'],
 })
@@ -24,17 +25,21 @@ export class MiPerfil {
   protected readonly total = signal(0);
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly editando = signal(false);
 
   constructor() {
     this.auth.refrescarUsuario();
-    // depende solo del id: refrescar los datos del usuario no vuelve a pedir las publicaciones
     const idUsuario = computed(() => this.auth.usuario()?._id);
     effect(() => {
       if (idUsuario()) untracked(() => this.cargar());
     });
   }
 
-  // mis últimas 3 publicaciones
+  protected alGuardarPerfil() {
+    this.editando.set(false);
+    this.cargar();
+  }
+
   protected cargar() {
     const usuario = this.auth.usuario();
     if (!usuario) return;

@@ -1,8 +1,12 @@
-// el hover se escucha en el host (que no se mueve) para que la tarjeta no titile al levantarse
-:host { display: block; }
+:host {
+  display: block;
+}
 
-.publicacion { position: relative; padding: 1.25rem; margin-bottom: 1rem; }
-// al pasar el mouse la tarjeta se levanta y aparece una línea naranja arriba
+.publicacion {
+  position: relative;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
 .publicacion::before {
   content: '';
   position: absolute;
@@ -18,16 +22,78 @@
   box-shadow: var(--shadow-hover);
   border-color: var(--accent-border);
 }
-:host(:hover) .publicacion::before { opacity: 1; }
+:host(:hover) .publicacion::before {
+  opacity: 1;
+}
 
-header { display: flex; align-items: center; gap: 0.75rem; }
-.autor { display: flex; flex-direction: column; min-width: 0; flex: 1; }
-.autor strong, .autor .meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-header button { padding: 0.4rem; }
+header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.autor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.autor strong,
+.autor .meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+header button {
+  padding: 0.4rem;
+}
 
-// overflow-wrap corta las palabras largas sin espacios (ej. "aaaa…") para que no se salgan de la tarjeta
-h3 { margin: 1rem 0 0.35rem; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; overflow-wrap: anywhere; }
-.mensaje { margin: 0; color: var(--text-primary); white-space: pre-line; overflow-wrap: anywhere; }
+.titulo {
+  margin: 1rem 0 0.35rem;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.titulo a {
+  color: inherit;
+  text-decoration: none;
+}
+.titulo a:hover {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.grande {
+  padding: 1.75rem;
+}
+.grande .titulo {
+  margin-top: 1.25rem;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.grande .mensaje {
+  font-size: 17px;
+}
+.grande .imagen {
+  max-height: 40rem;
+  object-fit: contain;
+}
+:host(:hover) .grande {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-soft);
+}
+:host(:hover) .grande::before {
+  opacity: 0;
+}
+.mensaje {
+  margin: 0;
+  color: var(--text-primary);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
 
 .imagen {
   display: block;
@@ -40,18 +106,40 @@ h3 { margin: 1rem 0 0.35rem; font-size: 17px; font-weight: 600; letter-spacing: 
   background: var(--bg-subtle);
 }
 
-footer { display: flex; align-items: center; gap: 1rem; margin-top: 1rem; }
-.me-gusta { color: var(--text-secondary); }
+footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.me-gusta {
+  color: var(--text-secondary);
+}
 .me-gusta.activo {
   color: #e11d48;
   border-color: rgb(244 63 94 / 0.35);
   background: rgb(244 63 94 / 0.08);
 }
-.me-gusta.activo:hover { background: rgb(244 63 94 / 0.14); }
-// el corazón "late" solo cuando el usuario acaba de dar me gusta
-.me-gusta.latido app-icono { animation: latido 350ms ease-out; }
-@keyframes latido { 40% { transform: scale(1.35); } }
-.contador { display: inline-flex; align-items: center; gap: 0.35rem; }
+.me-gusta.activo:hover {
+  background: rgb(244 63 94 / 0.14);
+}
+.me-gusta.latido app-icono {
+  animation: latido 350ms ease-out;
+}
+@keyframes latido {
+  40% {
+    transform: scale(1.35);
+  }
+}
+.contador {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+}
+a.contador:hover {
+  color: var(--accent-text);
+}
 
 .sr-only {
   position: absolute;

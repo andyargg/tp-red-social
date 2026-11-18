@@ -20,7 +20,6 @@ import { IdValidoPipe } from '../validacion/id-valido.pipe.js';
 import { opcionesImagen } from '../imagenes/opciones-imagen.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { ListarPublicacionesDto } from './dto/listar-publicaciones.dto.js';
-import { PaginacionDto } from './dto/paginacion.dto.js';
 import { PublicacionesService } from './publicaciones.service.js';
 
 @Controller('publicaciones')
@@ -28,7 +27,6 @@ import { PublicacionesService } from './publicaciones.service.js';
 export class PublicacionesController {
   constructor(private readonly publicaciones: PublicacionesService) {}
 
-  // multipart/form-data: titulo, mensaje y un archivo "imagen" opcional
   @Post()
   @UseInterceptors(FileInterceptor('imagen', opcionesImagen))
   crear(
@@ -39,13 +37,20 @@ export class PublicacionesController {
     return this.publicaciones.crear(dto, usuario.sub, imagen);
   }
 
-  // ?orden=fecha|meGusta&usuario=<id>&offset=0&limit=10
   @Get()
   listar(
     @Query() filtros: ListarPublicacionesDto,
     @UsuarioToken() usuario: PayloadToken,
   ) {
     return this.publicaciones.listar(filtros, usuario.sub);
+  }
+
+  @Get(':id')
+  obtener(
+    @Param('id', IdValidoPipe) id: string,
+    @UsuarioToken() usuario: PayloadToken,
+  ) {
+    return this.publicaciones.obtener(id, usuario.sub);
   }
 
   @Delete(':id')
@@ -71,14 +76,5 @@ export class PublicacionesController {
     @UsuarioToken() usuario: PayloadToken,
   ) {
     return this.publicaciones.quitarMeGusta(id, usuario.sub);
-  }
-
-  // ?offset=0&limit=10; agregar y editar comentarios llega en el sprint 3
-  @Get(':id/comentarios')
-  listarComentarios(
-    @Param('id', IdValidoPipe) id: string,
-    @Query() paginacion: PaginacionDto,
-  ) {
-    return this.publicaciones.listarComentarios(id, paginacion);
   }
 }

@@ -8,7 +8,6 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import { TAMANIO_MAXIMO } from '../imagenes/opciones-imagen.js';
 
-// multer responde en inglés ("File too large", "Unexpected field"): se traducen
 @Catch(PayloadTooLargeException, BadRequestException)
 export class ErroresDeArchivoFilter extends BaseExceptionFilter {
   catch(error: HttpException, host: ArgumentsHost) {

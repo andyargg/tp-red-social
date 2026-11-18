@@ -30,14 +30,8 @@
       </button>
     </div>
   }
-  @if (form.controls.imagen.errors; as errores) {
-    <p class="campo-error">
-      @if (errores['tipoImagen']) {
-        La imagen debe ser JPG, PNG, WEBP o GIF.
-      } @else {
-        La imagen puede pesar hasta 5 MB.
-      }
-    </p>
+  @if (errorImagen(); as error) {
+    <p class="campo-error">{{ error }}</p>
   }
 
   <div class="acciones-form">

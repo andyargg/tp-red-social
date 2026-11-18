@@ -5,24 +5,26 @@ import { AppModule } from '../src/app.module.js';
 import { configurarApp } from '../src/configurar-app.js';
 import { ImagenesService } from '../src/imagenes/imagenes.service.js';
 
-// PNG de 1x1 para probar la subida de imágenes
 export const PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
   'base64',
 );
 
-// reemplaza a Cloudinary: los tests no suben nada ni necesitan credenciales
 export function crearImagenesFalso() {
   return {
     subidas: [] as { carpeta: string; tamanio: number }[],
+    eliminadas: [] as string[],
+    async eliminar(url: string | null | undefined) {
+      if (url) this.eliminadas.push(url);
+    },
     async subir(archivo: Express.Multer.File, carpeta: string) {
       this.subidas.push({ carpeta, tamanio: archivo.size });
-      return `https://res.cloudinary.com/test/image/upload/red-social/${carpeta}/foto.png`;
+      const n = this.subidas.length;
+      return `https://res.cloudinary.com/test/image/upload/red-social/${carpeta}/foto${n}.png`;
     },
   };
 }
 
-// la app completa contra un MongoDB en memoria
 export async function crearAppDePrueba(
   imagenes: ReturnType<typeof crearImagenesFalso>,
 ) {

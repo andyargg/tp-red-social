@@ -53,7 +53,7 @@ describe('Auth (e2e)', () => {
       expect(res.body.usuario.password).toBeUndefined();
 
       expect(res.body.usuario.imagenPerfil).toBe(
-        'https://res.cloudinary.com/test/image/upload/red-social/perfiles/foto.png',
+        'https://res.cloudinary.com/test/image/upload/red-social/perfiles/foto1.png',
       );
       expect(imagenesFalso.subidas).toEqual([
         { carpeta: 'perfiles', tamanio: PNG.length },
@@ -257,7 +257,7 @@ describe('Auth (e2e)', () => {
       expect(estados.sort()).toEqual([201, 409]);
     });
 
-    it('GET /api/auth/yo devuelve los datos actuales del usuario del token', async () => {
+    it('POST /api/auth/autorizar devuelve los datos actuales del usuario del token', async () => {
       const { body } = await request(app.getHttpServer())
         .post('/api/auth/login')
         .send({ usuario: 'carla', password: 'Secreta123' })
@@ -266,7 +266,7 @@ describe('Auth (e2e)', () => {
       await app.get(UsuariosService).cambiarPerfil('carla', 'administrador');
 
       const res = await request(app.getHttpServer())
-        .get('/api/auth/yo')
+        .post('/api/auth/autorizar')
         .set('Authorization', `Bearer ${body.token}`)
         .expect(200);
       expect(res.body).toMatchObject({
@@ -275,7 +275,9 @@ describe('Auth (e2e)', () => {
       });
       expect(res.body.password).toBeUndefined();
 
-      await request(app.getHttpServer()).get('/api/auth/yo').expect(401);
+      await request(app.getHttpServer())
+        .post('/api/auth/autorizar')
+        .expect(401);
     });
   });
 });

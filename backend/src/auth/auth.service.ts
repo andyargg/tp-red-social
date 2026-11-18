@@ -2,13 +2,13 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
 import { ImagenesService } from '../imagenes/imagenes.service.js';
 import { Perfil, UsuarioDocument } from '../usuarios/usuario.schema.js';
+import { PayloadToken } from './payload-token.js';
 import { UsuariosService } from '../usuarios/usuarios.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegistroDto } from './dto/registro.dto.js';
@@ -23,7 +23,6 @@ export class AuthService {
     private readonly imagenes: ImagenesService,
   ) {}
 
-  // la ruta pública nunca pasa "perfil": solo el script crear-admin (y el sprint 4) crean administradores
   async registro(
     dto: RegistroDto,
     imagen?: Express.Multer.File,
@@ -52,20 +51,15 @@ export class AuthService {
         imagenPerfil,
         perfil,
       })
-      .catch(duplicadoComoConflicto);
+      .catch(async (error: unknown) => {
+        await this.imagenes.eliminar(imagenPerfil);
+        return duplicadoComoConflicto(error);
+      });
     return this.sesion(usuario);
-  }
-
-  // datos actuales del usuario del token (el perfil o la foto pueden haber cambiado)
-  async yo(id: string) {
-    const usuario = await this.usuarios.buscarPorId(id);
-    if (!usuario) throw new NotFoundException('El usuario no existe');
-    return usuario;
   }
 
   async login(dto: LoginDto) {
     const usuario = await this.usuarios.buscarParaLogin(dto.usuario);
-    // misma respuesta para un usuario inexistente y una contraseña incorrecta
     if (!usuario || !(await bcrypt.compare(dto.password, usuario.password))) {
       throw new UnauthorizedException('Usuario o contraseña incorrectos');
     }
@@ -77,18 +71,24 @@ export class AuthService {
     return this.sesion(usuario);
   }
 
+  async refrescar({ sub, nombreUsuario, perfil }: PayloadToken) {
+    return { token: await this.firmar({ sub, nombreUsuario, perfil }) };
+  }
+
   private async sesion(usuario: UsuarioDocument) {
-    const token = await this.jwt.signAsync({
+    const token = await this.firmar({
       sub: usuario.id,
       nombreUsuario: usuario.nombreUsuario,
       perfil: usuario.perfil,
     });
     return { usuario: usuario.toJSON(), token };
   }
+
+  private firmar(payload: PayloadToken) {
+    return this.jwt.signAsync(payload);
+  }
 }
 
-// si dos registros iguales llegan a la vez, ambos pasan los exists() y el índice único
-// de Mongo rechaza al segundo (E11000): se responde 409 como en el caso normal
 function duplicadoComoConflicto(error: unknown): never {
   const { code, keyPattern } = error as {
     code?: number;

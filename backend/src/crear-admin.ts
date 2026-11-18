@@ -72,7 +72,6 @@ try {
     );
   }
 } catch (error) {
-  // los errores de la API (correo repetido, etc.) traen el mensaje en la respuesta
   const mensaje =
     error instanceof HttpException ? error.message : (error as Error).message;
   console.error(`Error: ${mensaje}`);

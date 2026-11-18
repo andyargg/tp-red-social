@@ -12,7 +12,6 @@ export class Usuario {
   @Prop({ type: String, required: true, trim: true })
   apellido: string;
 
-  // correo y nombreUsuario se guardan en minúsculas para que la unicidad no distinga mayúsculas
   @Prop({
     type: String,
     required: true,
@@ -46,7 +45,6 @@ export class Usuario {
   @Prop({ type: String, enum: PERFILES, default: 'usuario' })
   perfil: Perfil;
 
-  // baja lógica: un usuario deshabilitado no puede ingresar (sprint 4)
   @Prop({ type: Boolean, default: true })
   activo: boolean;
 }
@@ -55,7 +53,6 @@ export type UsuarioDocument = HydratedDocument<Usuario>;
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);
 
-// nunca se envía el hash de la contraseña, aunque se haya pedido para validar el login
 UsuarioSchema.set('toJSON', {
   versionKey: false,
   transform: (_doc, ret) => {

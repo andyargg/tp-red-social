@@ -7,22 +7,26 @@ export interface DatosModal {
   mensaje: string;
   tipo?: TipoModal;
   textoBoton?: string;
-  // con textoCancelar el modal pide confirmación y muestra dos botones
   textoCancelar?: string;
   peligroso?: boolean;
 }
 
-// reemplaza a alert() y confirm(): un único modal para toda la app, montado en App
+interface Pendiente {
+  datos: DatosModal;
+  responder: (aceptado: boolean) => void;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   readonly actual = signal<DatosModal | null>(null);
-  private alCerrar?: (aceptado: boolean) => void;
+  private abierto?: Pendiente;
+  private readonly cola: Pendiente[] = [];
 
-  // se resuelve en true si se tocó el botón principal
   abrir(datos: DatosModal): Promise<boolean> {
-    this.alCerrar?.(false);
-    this.actual.set({ tipo: 'info', textoBoton: 'Aceptar', ...datos });
-    return new Promise((resolve) => (this.alCerrar = resolve));
+    return new Promise((responder) => {
+      this.cola.push({ datos: { tipo: 'info', textoBoton: 'Aceptar', ...datos }, responder });
+      if (!this.abierto) this.mostrarSiguiente();
+    });
   }
 
   confirmar(datos: DatosModal): Promise<boolean> {
@@ -30,9 +34,21 @@ export class ModalService {
   }
 
   cerrar(aceptado = false) {
-    const alCerrar = this.alCerrar;
-    this.alCerrar = undefined;
-    this.actual.set(null);
-    alCerrar?.(aceptado);
+    const abierto = this.abierto;
+    this.abierto = undefined;
+    abierto?.responder(aceptado);
+    this.mostrarSiguiente();
+  }
+
+  descartar(titulo: string) {
+    for (let i = this.cola.length - 1; i >= 0; i--) {
+      if (this.cola[i].datos.titulo === titulo) this.cola.splice(i, 1)[0].responder(false);
+    }
+    if (this.abierto?.datos.titulo === titulo) this.cerrar(false);
+  }
+
+  private mostrarSiguiente() {
+    this.abierto = this.cola.shift();
+    this.actual.set(this.abierto?.datos ?? null);
   }
 }

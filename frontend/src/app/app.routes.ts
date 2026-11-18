@@ -1,21 +1,29 @@
 import { Routes } from '@angular/router';
+import { invitadoGuard, sesionGuard } from './core/guards';
 import { Shell } from './layout/shell';
 
-// sprint 1: navegación libre, sin guards
 export const routes: Routes = [
+  {
+    path: 'cargando',
+    title: 'Cargando · Socialito',
+    loadComponent: () => import('./pages/cargando/cargando').then((m) => m.Cargando),
+  },
   {
     path: 'login',
     title: 'Ingresar · Socialito',
+    canActivate: [invitadoGuard],
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
   },
   {
     path: 'registro',
     title: 'Crear cuenta · Socialito',
+    canActivate: [invitadoGuard],
     loadComponent: () => import('./pages/registro/registro').then((m) => m.Registro),
   },
   {
     path: '',
     component: Shell,
+    canActivate: [sesionGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'publicaciones' },
       {
@@ -23,6 +31,12 @@ export const routes: Routes = [
         title: 'Publicaciones · Socialito',
         loadComponent: () =>
           import('./pages/publicaciones/publicaciones').then((m) => m.Publicaciones),
+      },
+      {
+        path: 'publicaciones/:id',
+        title: 'Publicación · Socialito',
+        loadComponent: () =>
+          import('./pages/publicacion/publicacion-detalle').then((m) => m.PublicacionDetalle),
       },
       {
         path: 'mi-perfil',

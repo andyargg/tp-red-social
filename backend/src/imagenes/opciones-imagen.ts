@@ -3,8 +3,6 @@ import { BadRequestException } from '@nestjs/common';
 const TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 export const TAMANIO_MAXIMO = 5 * 1024 * 1024;
 
-// opciones de multer: el archivo queda en memoria hasta validar el body, así una petición
-// rechazada nunca llega a subir la imagen a Cloudinary
 export const opcionesImagen = {
   limits: { fileSize: TAMANIO_MAXIMO },
   fileFilter: (

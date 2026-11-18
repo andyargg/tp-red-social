@@ -1,7 +1,6 @@
 import { Recortar } from '../../validacion/recortar.js';
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
-// class-validator evalúa primero el decorador de más abajo (ver RegistroDto)
 export class CrearPublicacionDto {
   @Recortar()
   @MaxLength(100, { message: 'El título puede tener hasta 100 caracteres' })

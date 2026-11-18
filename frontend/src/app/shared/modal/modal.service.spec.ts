@@ -15,11 +15,32 @@ describe('ModalService', () => {
     expect(await cancelado).toBe(false);
   });
 
-  it('abrir otro modal cancela el anterior', async () => {
+  it('un modal pedido mientras hay otro abierto espera su turno', async () => {
     const modal = new ModalService();
     const primero = modal.confirmar({ titulo: 'Primero', mensaje: '' });
-    modal.abrir({ titulo: 'Segundo', mensaje: '' });
-    expect(await primero).toBe(false);
+    const segundo = modal.abrir({ titulo: 'Segundo', mensaje: '' });
+    expect(modal.actual()?.titulo).toBe('Primero');
+
+    modal.cerrar(true);
+    expect(await primero).toBe(true);
     expect(modal.actual()?.titulo).toBe('Segundo');
+    modal.cerrar(true);
+    expect(await segundo).toBe(true);
+    expect(modal.actual()).toBeNull();
+  });
+
+  it('descartar cancela un modal abierto o en espera', async () => {
+    const modal = new ModalService();
+    const abierto = modal.abrir({ titulo: 'Aviso', mensaje: '' });
+    const otro = modal.abrir({ titulo: 'Otro', mensaje: '' });
+    const enEspera = modal.abrir({ titulo: 'Aviso', mensaje: '' });
+
+    modal.descartar('Aviso');
+    expect(await abierto).toBe(false);
+    expect(await enEspera).toBe(false);
+    expect(modal.actual()?.titulo).toBe('Otro');
+    modal.cerrar();
+    expect(await otro).toBe(false);
+    expect(modal.actual()).toBeNull();
   });
 });

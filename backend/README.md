@@ -16,7 +16,7 @@ Copiar `.env.example` a `.env`:
 
 ## Módulos
 
-- `auth`: registro, login y `JwtGuard`, que protege las rutas con el token.
-- `usuarios`: modelo y acceso a los usuarios.
-- `publicaciones`: alta, listado paginado, baja lógica y me gusta de publicaciones; lectura de comentarios.
+- `auth`: registro, login, autorizar y refrescar el token, y `JwtGuard`, que protege las rutas con el token.
+- `usuarios`: modelo de usuarios y edición del perfil propio (`PATCH /usuarios/yo`).
+- `publicaciones`: alta, detalle, listado paginado, baja lógica y me gusta de publicaciones (`PublicacionesController`); listado, alta y edición de comentarios (`ComentariosController`).
 - `imagenes`: subida de imágenes a Cloudinary (carpeta `red-social/`).

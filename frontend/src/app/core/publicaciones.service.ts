@@ -2,7 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Orden, PaginaComentarios, PaginaPublicaciones, Publicacion } from './publicacion';
+import {
+  Comentario,
+  Orden,
+  PaginaComentarios,
+  PaginaPublicaciones,
+  Publicacion,
+} from './publicacion';
 
 export interface FiltrosPublicaciones {
   orden?: Orden;
@@ -23,7 +29,10 @@ export class PublicacionesService {
     return this.http.get<PaginaPublicaciones>(this.url, { params });
   }
 
-  // FormData con titulo, mensaje e imagen opcional
+  obtener(id: string): Observable<Publicacion> {
+    return this.http.get<Publicacion>(`${this.url}/${id}`);
+  }
+
   crear(datos: FormData): Observable<Publicacion> {
     return this.http.post<Publicacion>(this.url, datos);
   }
@@ -43,6 +52,16 @@ export class PublicacionesService {
   comentarios(id: string, offset = 0, limit = 10): Observable<PaginaComentarios> {
     return this.http.get<PaginaComentarios>(`${this.url}/${id}/comentarios`, {
       params: { offset, limit },
+    });
+  }
+
+  comentar(id: string, mensaje: string): Observable<Comentario> {
+    return this.http.post<Comentario>(`${this.url}/${id}/comentarios`, { mensaje });
+  }
+
+  editarComentario(id: string, comentarioId: string, mensaje: string): Observable<Comentario> {
+    return this.http.put<Comentario>(`${this.url}/${id}/comentarios/${comentarioId}`, {
+      mensaje,
     });
   }
 }

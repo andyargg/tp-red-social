@@ -11,8 +11,6 @@ import { FechaPasada } from '../../validacion/fecha-pasada.js';
 import { Recortar } from '../../validacion/recortar.js';
 import { PASSWORD_REGEX, PASSWORD_MENSAJE } from './password.js';
 
-// con stopAtFirstError se informa un solo error por campo, y class-validator evalúa
-// primero el decorador de más abajo: por eso "obligatorio" va al final
 export class RegistroDto {
   @Recortar()
   @MaxLength(50, { message: 'El nombre puede tener hasta 50 caracteres' })

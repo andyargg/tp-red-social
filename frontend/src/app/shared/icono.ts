@@ -1,7 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-// trazos de Lucide (https://lucide.dev, licencia ISC)
 const TRAZOS = {
   inicio:
     '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
@@ -35,6 +34,10 @@ const TRAZOS = {
   izquierda: '<path d="m15 18-6-6 6-6"/>',
   derecha: '<path d="m9 18 6-6-6-6"/>',
   cerrar: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  lapiz:
+    '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+  enviar:
+    '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
 };
 
 export type NombreIcono = keyof typeof TRAZOS;
@@ -56,7 +59,6 @@ export class Icono {
   readonly relleno = input(false);
   private readonly sanitizer = inject(DomSanitizer);
 
-  // los trazos son constantes de este archivo, nunca datos del usuario
   protected readonly svg = computed(() =>
     this.sanitizer.bypassSecurityTrustHtml(
       `<svg xmlns="http://www.w3.org/2000/svg" width="${this.tamanio()}" height="${this.tamanio()}" viewBox="0 0 24 24" fill="${this.relleno() ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${TRAZOS[this.nombre()]}</svg>`,

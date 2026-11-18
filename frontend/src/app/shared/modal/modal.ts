@@ -64,14 +64,17 @@ export class Modal {
   protected readonly datos = this.modal.actual;
   protected readonly iconos = ICONOS;
   private readonly dialogo = viewChild.required<ElementRef<HTMLDialogElement>>('dialogo');
-  // Escape o cerrar sin tocar el botón principal cuenta como cancelar
   private aceptado = false;
+  private cerradoPorElServicio = false;
 
   constructor() {
     effect(() => {
       const dialogo = this.dialogo().nativeElement;
       if (this.datos() && !dialogo.open) dialogo.showModal();
-      if (!this.datos() && dialogo.open) dialogo.close();
+      if (!this.datos() && dialogo.open) {
+        this.cerradoPorElServicio = true;
+        dialogo.close();
+      }
     });
   }
 
@@ -83,6 +86,10 @@ export class Modal {
   protected alCerrar() {
     const aceptado = this.aceptado;
     this.aceptado = false;
+    if (this.cerradoPorElServicio) {
+      this.cerradoPorElServicio = false;
+      return;
+    }
     if (this.datos()) this.modal.cerrar(aceptado);
   }
 }

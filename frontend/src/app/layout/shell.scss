@@ -1,4 +1,8 @@
-.app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
 
 .sidebar {
   position: sticky;
@@ -24,7 +28,11 @@
   text-decoration: none;
 }
 
-nav { display: flex; flex-direction: column; gap: 0.125rem; }
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
 nav a {
   position: relative;
   display: flex;
@@ -35,8 +43,14 @@ nav a {
   color: var(--text-secondary);
   text-decoration: none;
 }
-nav a:hover { color: var(--text-primary); background: var(--bg-subtle); }
-nav a.activo { color: var(--cobalt); background: var(--cobalt-bg); }
+nav a:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+nav a.activo {
+  color: var(--cobalt);
+  background: var(--cobalt-bg);
+}
 nav a.activo::before {
   content: '';
   position: absolute;
@@ -48,8 +62,16 @@ nav a.activo::before {
   background: var(--accent);
 }
 
-.pie { margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem; padding: 0 0.25rem; }
-.pie .button { justify-content: center; }
+.pie {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 0.25rem;
+}
+.pie .button {
+  justify-content: center;
+}
 .quien {
   display: flex;
   align-items: center;
@@ -60,10 +82,24 @@ nav a.activo::before {
   text-decoration: none;
   min-width: 0;
 }
-.quien:hover { background: var(--bg-subtle); }
-.quien span { display: flex; flex-direction: column; min-width: 0; }
-.quien strong, .quien small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.quien small { font-size: 13px; color: var(--text-secondary); }
+.quien:hover {
+  background: var(--bg-subtle);
+}
+.quien span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.quien strong,
+.quien small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.quien small {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
 .salir {
   justify-content: center;
   background: var(--bg-surface);
@@ -71,13 +107,20 @@ nav a.activo::before {
   color: var(--danger);
   --sombra-boton: none;
 }
-.salir:hover { background: var(--danger-bg); }
+.salir:hover {
+  background: var(--danger-bg);
+}
 
-.contenido { padding: 2rem; min-width: 0; }
+.contenido {
+  padding: 2rem;
+  min-width: 0;
+}
 
 @media (max-width: 768px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-  // en el celular: marca y sesión arriba, navegación debajo
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
   .sidebar {
     position: static;
     height: auto;
@@ -89,12 +132,34 @@ nav a.activo::before {
     border-bottom: 1px solid var(--border);
     padding: 0.75rem;
   }
-  .marca { padding: 0 0.25rem; }
-  nav { grid-column: 1 / -1; flex-direction: row; }
-  nav a.activo::before { display: none; }
-  .pie { grid-row: 1; grid-column: 2; margin: 0; flex-direction: row; align-items: center; }
-  .pie .button, .salir { padding: 0.4rem 0.7rem; }
-  .quien { padding: 0; }
-  .quien span { display: none; }
-  .contenido { padding: 1rem; }
+  .marca {
+    padding: 0 0.25rem;
+  }
+  nav {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+  nav a.activo::before {
+    display: none;
+  }
+  .pie {
+    grid-row: 1;
+    grid-column: 2;
+    margin: 0;
+    flex-direction: row;
+    align-items: center;
+  }
+  .pie .button,
+  .salir {
+    padding: 0.4rem 0.7rem;
+  }
+  .quien {
+    padding: 0;
+  }
+  .quien span {
+    display: none;
+  }
+  .contenido {
+    padding: 1rem;
+  }
 }

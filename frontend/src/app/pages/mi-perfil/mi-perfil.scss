@@ -1,21 +1,43 @@
-.perfil { max-width: 48rem; margin: 0 auto; }
+.perfil {
+  max-width: 48rem;
+  margin: 0 auto;
+}
 
 .hero {
   display: flex;
   gap: 1.25rem;
   align-items: center;
-  // borde superior naranja como detalle de la tarjeta principal
   border-top: 3px solid var(--accent);
 }
-// anillo naranja alrededor de la foto
 .hero app-avatar {
-  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 0 5px var(--accent);
+  box-shadow:
+    0 0 0 3px var(--bg-surface),
+    0 0 0 5px var(--accent);
 }
-.identidad { min-width: 0; }
-.nombre { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
-.nombre h2 { margin: 0; font-size: 22px; }
-.identidad p { margin: 0.25rem 0 0; }
-.descripcion { color: var(--text-primary); }
+.identidad {
+  min-width: 0;
+  flex: 1;
+}
+.editar {
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+.nombre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nombre h2 {
+  margin: 0;
+  font-size: 22px;
+}
+.identidad p {
+  margin: 0.25rem 0 0;
+}
+.descripcion {
+  color: var(--text-primary);
+}
 
 .datos {
   display: grid;
@@ -43,6 +65,19 @@
   color: var(--text-secondary);
 }
 
-@media (max-width: 600px) { .hero { flex-direction: column; text-align: center; } .nombre { justify-content: center; } }
+@media (max-width: 600px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+  .nombre {
+    justify-content: center;
+  }
+}
 
-.titulo-seccion { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.titulo-seccion {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}

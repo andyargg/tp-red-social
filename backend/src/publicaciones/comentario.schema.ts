@@ -23,7 +23,6 @@ export class Comentario {
   @Prop({ type: String, required: true, trim: true })
   mensaje: string;
 
-  // se marca al editar el comentario (sprint 3)
   @Prop({ type: Boolean, default: false })
   modificado: boolean;
 }

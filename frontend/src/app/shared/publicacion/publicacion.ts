@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
 import { Publicacion } from '../../core/publicacion';
@@ -9,11 +10,9 @@ import { Avatar } from '../avatar';
 import { Icono } from '../icono';
 import { ModalService } from '../modal/modal.service';
 
-// tarjeta de una publicación: me gusta y baja (de las propias, o de cualquiera si soy administrador).
-// lo que se proyecta adentro (por ejemplo, los comentarios) va al pie de la tarjeta
 @Component({
   selector: 'app-publicacion',
-  imports: [DatePipe, Avatar, Icono],
+  imports: [DatePipe, RouterLink, Avatar, Icono],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.scss',
 })
@@ -23,12 +22,12 @@ export class PublicacionCard {
   private readonly modal = inject(ModalService);
 
   readonly publicacion = input.required<Publicacion>();
+  readonly grande = input(false);
   readonly eliminada = output<string>();
+  readonly actualizada = output<Publicacion>();
 
-  // copia local que se actualiza con la respuesta del me gusta
   protected readonly datos = linkedSignal(() => this.publicacion());
   protected readonly procesando = signal(false);
-  // true solo un instante después de dar me gusta, para animar el corazón
   protected readonly latido = signal(false);
   protected readonly esMia = computed(() => this.auth.usuario()?._id === this.datos().autor._id);
   protected readonly puedoEliminar = computed(
@@ -42,18 +41,19 @@ export class PublicacionCard {
     pedido.subscribe({
       next: (actualizada) => {
         this.datos.set(actualizada);
+        this.actualizada.emit(actualizada);
         this.procesando.set(false);
         this.latido.set(actualizada.meGustaYo);
       },
       error: (error) => {
         this.procesando.set(false);
-        // 409: el me gusta ya estaba en ese estado (por ejemplo, desde otra pestaña); se sincroniza
         if (error instanceof HttpErrorResponse && error.status === 409) {
           this.datos.update((p) => ({
             ...p,
             meGustaYo: !meGustaYo,
             cantidadMeGusta: Math.max(0, p.cantidadMeGusta + (meGustaYo ? -1 : 1)),
           }));
+          this.actualizada.emit(this.datos());
           return;
         }
         this.modal.abrir({
