@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ModalService } from '../shared/modal/modal.service';
 import { AuthService } from './auth.service';
 import { mensajeDeError } from './errores';
-import { vencimiento } from './jwt';
+import { usuarioDelToken, vencimiento } from './jwt';
 
 const AVISO_ANTES_DE_VENCER = 1 * 60 * 1000;
 const TITULO_AVISO = 'Tu sesión está por vencer';
@@ -16,13 +16,19 @@ export class SesionService {
   private readonly modal = inject(ModalService);
   private readonly router = inject(Router);
   private temporizadores: ReturnType<typeof setTimeout>[] = [];
+  private tokenProgramado: string | null = null;
+  private avisoMostrado: string | null = null;
 
   constructor() {
     effect(() => {
       const token = this.auth.token();
       const ahora = this.auth.ahora();
       this.cancelarTemporizadores();
-      this.modal.descartar(TITULO_AVISO);
+      if (token !== this.tokenProgramado) {
+        this.modal.descartar(TITULO_AVISO);
+        this.tokenProgramado = token;
+        this.avisoMostrado = null;
+      }
       this.programarAviso(token, ahora);
     });
 
@@ -51,11 +57,10 @@ export class SesionService {
   private programarAviso(token: string | null, ahora: number) {
     const vence = token ? vencimiento(token) : null;
     if (!token || !vence || vence <= ahora) return;
+    this.temporizadores.push(setTimeout(() => this.vencer(token), vence - ahora));
+    if (this.avisoMostrado === token) return;
     const espera = Math.max(0, vence - AVISO_ANTES_DE_VENCER - ahora);
-    this.temporizadores.push(
-      setTimeout(() => this.avisar(token), espera),
-      setTimeout(() => this.vencer(token), vence - ahora),
-    );
+    this.temporizadores.push(setTimeout(() => this.avisar(token), espera));
   }
 
   private vencer(token: string) {
@@ -79,6 +84,7 @@ export class SesionService {
   }
 
   private async avisar(token: string) {
+    this.avisoMostrado = token;
     const extender = await this.modal.confirmar({
       tipo: 'info',
       titulo: TITULO_AVISO,
@@ -91,7 +97,10 @@ export class SesionService {
 
     this.auth.refrescar().subscribe({
       next: () => {
-        if (this.auth.token() === token || this.auth.token() === null) return;
+        const actual = this.auth.token();
+        if (!actual || actual === token || usuarioDelToken(actual) !== usuarioDelToken(token)) {
+          return;
+        }
         this.modal.abrir({
           tipo: 'exito',
           titulo: 'Sesión extendida',

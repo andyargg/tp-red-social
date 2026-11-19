@@ -36,9 +36,9 @@ export class AuthService {
     return Date.now() + this.desfaseDelReloj();
   }
 
-  registrarHoraDelServidor(hora: number) {
+  registrarHoraDelServidor(hora: number, horaLocal = Date.now()) {
     if (Number.isNaN(hora)) return;
-    const desfase = hora - Date.now();
+    const desfase = hora - horaLocal;
     if (Math.abs(desfase - this.desfaseDelReloj()) > MARGEN_DEL_RELOJ) {
       this.desfaseDelReloj.set(desfase);
     }
