@@ -8,6 +8,7 @@ import { vencimiento } from './jwt';
 
 const AVISO_ANTES_DE_VENCER = 1 * 60 * 1000;
 const TITULO_AVISO = 'Tu sesión está por vencer';
+const TOLERANCIA_ENTRE_PESTANIAS = 2_000;
 
 @Injectable({ providedIn: 'root' })
 export class SesionService {
@@ -19,14 +20,23 @@ export class SesionService {
   constructor() {
     effect(() => {
       const token = this.auth.token();
+      const ahora = this.auth.ahora();
       this.cancelarTemporizadores();
       this.modal.descartar(TITULO_AVISO);
-      this.programarAviso(token);
+      this.programarAviso(token, ahora);
     });
 
     const alCambiarAlmacenamiento = (evento: StorageEvent) => {
+      const anterior = this.auth.token();
       const cambio = this.auth.sincronizar(evento.key);
-      if (cambio === 'cerrada') this.router.navigateByUrl('/login');
+      if (cambio === 'cerrada') {
+        const vencio =
+          anterior !== null &&
+          (vencimiento(anterior) ?? Infinity) <= this.auth.ahora() + TOLERANCIA_ENTRE_PESTANIAS;
+        this.router.navigateByUrl('/login').then(() => {
+          if (vencio) this.avisarQueTermino();
+        });
+      }
       if (cambio === 'otroUsuario') {
         this.router.navigate(['/cargando'], { queryParams: { destino: this.router.url } });
       }
@@ -38,13 +48,13 @@ export class SesionService {
     });
   }
 
-  private programarAviso(token: string | null) {
+  private programarAviso(token: string | null, ahora: number) {
     const vence = token ? vencimiento(token) : null;
-    if (!token || !vence || vence <= Date.now()) return;
-    const espera = Math.max(0, vence - AVISO_ANTES_DE_VENCER - Date.now());
+    if (!token || !vence || vence <= ahora) return;
+    const espera = Math.max(0, vence - AVISO_ANTES_DE_VENCER - ahora);
     this.temporizadores.push(
       setTimeout(() => this.avisar(token), espera),
-      setTimeout(() => this.vencer(token), vence - Date.now()),
+      setTimeout(() => this.vencer(token), vence - ahora),
     );
   }
 
@@ -52,13 +62,15 @@ export class SesionService {
     this.modal.descartar(TITULO_AVISO);
     if (this.auth.token() !== token) return;
     this.auth.cerrarSesion();
-    this.router.navigateByUrl('/login').then(() =>
-      this.modal.abrir({
-        tipo: 'info',
-        titulo: 'Tu sesión terminó',
-        mensaje: 'Tu sesión venció. Ingresá de nuevo para seguir.',
-      }),
-    );
+    this.router.navigateByUrl('/login').then(() => this.avisarQueTermino());
+  }
+
+  private avisarQueTermino() {
+    this.modal.abrir({
+      tipo: 'info',
+      titulo: 'Tu sesión terminó',
+      mensaje: 'Tu sesión venció. Ingresá de nuevo para seguir.',
+    });
   }
 
   private cancelarTemporizadores() {
@@ -74,16 +86,18 @@ export class SesionService {
       textoBoton: 'Extender sesión',
       textoCancelar: 'No, gracias',
     });
-    const vigente = (vencimiento(token) ?? 0) > Date.now();
+    const vigente = (vencimiento(token) ?? 0) > this.auth.ahora();
     if (!extender || !vigente || this.auth.token() !== token) return;
 
     this.auth.refrescar().subscribe({
-      next: () =>
+      next: () => {
+        if (this.auth.token() === token || this.auth.token() === null) return;
         this.modal.abrir({
           tipo: 'exito',
           titulo: 'Sesión extendida',
           mensaje: 'Tu sesión dura 2 minutos más.',
-        }),
+        });
+      },
       error: (error) => {
         if (error instanceof HttpErrorResponse && error.status === 401) return;
         this.modal.abrir({

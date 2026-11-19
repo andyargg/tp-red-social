@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -21,6 +21,7 @@ export class PublicacionCard {
   private readonly servicio = inject(PublicacionesService);
   private readonly modal = inject(ModalService);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   readonly publicacion = input.required<Publicacion>();
   readonly grande = input(false);
@@ -40,7 +41,15 @@ export class PublicacionCard {
     const destino = evento.target as HTMLElement | null;
     if (destino?.closest('a, button, input, textarea, select, label, .proyectado')) return;
     if (window.getSelection()?.toString()) return;
-    this.router.navigate(['/publicaciones', this.datos()._id]);
+    const ruta = ['/publicaciones', this.datos()._id];
+    if (evento.ctrlKey || evento.metaKey || evento.shiftKey) {
+      const url = this.location.prepareExternalUrl(
+        this.router.serializeUrl(this.router.createUrlTree(ruta)),
+      );
+      window.open(url, '_blank', 'noopener');
+      return;
+    }
+    this.router.navigate(ruta);
   }
 
   protected alternarMeGusta() {

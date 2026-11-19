@@ -67,6 +67,16 @@ describe('Sprint 3: sesión, publicación, comentarios y perfil (e2e)', () => {
       expect(payload.exp - payload.iat).toBe(2 * 60);
     });
 
+    it('expone la hora del servidor para que el front calcule el vencimiento', async () => {
+      const res = await api()
+        .post('/api/auth/autorizar')
+        .set('Origin', 'https://ejemplo.com')
+        .set(como(ana.token))
+        .expect(200);
+      expect(res.headers['access-control-expose-headers']).toContain('Date');
+      expect(Number.isNaN(Date.parse(res.headers.date))).toBe(false);
+    });
+
     it('POST /api/auth/autorizar responde 200 con los datos del usuario', async () => {
       const res = await api()
         .post('/api/auth/autorizar')

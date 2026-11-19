@@ -12,5 +12,8 @@ export function configurarApp(app: NestExpressApplication) {
     }),
   );
   app.useGlobalFilters(new ErroresDeArchivoFilter(app.getHttpAdapter()));
-  app.enableCors({ origin: process.env.FRONTEND_URL?.split(',') ?? true });
+  app.enableCors({
+    origin: process.env.FRONTEND_URL?.split(',') ?? true,
+    exposedHeaders: ['Date'],
+  });
 }

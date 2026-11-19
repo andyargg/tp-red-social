@@ -57,4 +57,21 @@ describe('AuthService.sincronizar (cambios desde otra pestaña)', () => {
     expect(auth.sincronizar('usuario')).toBe('ninguno');
     expect(auth.verificada()).toBe(true);
   });
+
+  it('ignora un refresco que llega después de cerrar la sesión', () => {
+    const http = TestBed.inject(HttpTestingController);
+    auth.refrescar().subscribe();
+    auth.cerrarSesion();
+    http.expectOne((req) => req.url.endsWith('/auth/refrescar')).flush({ token: token('ana') });
+    expect(auth.token()).toBeNull();
+    expect(localStorage.getItem('token')).toBeNull();
+  });
+
+  it('corrige el reloj de la compu con la hora del servidor', () => {
+    expect(Math.abs(auth.ahora() - Date.now())).toBeLessThan(50);
+    auth.registrarHoraDelServidor(Date.now() - 90_000);
+    expect(Math.abs(auth.ahora() - (Date.now() - 90_000))).toBeLessThan(50);
+    auth.registrarHoraDelServidor(Number.NaN);
+    expect(Math.abs(auth.ahora() - (Date.now() - 90_000))).toBeLessThan(50);
+  });
 });

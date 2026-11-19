@@ -8,6 +8,7 @@ import { Sesion, Usuario } from './usuario';
 const CLAVE_TOKEN = 'token';
 const CLAVE_USUARIO_ANTERIOR = 'usuario';
 const VALIDEZ_DE_LOS_DATOS = 10_000;
+const MARGEN_DEL_RELOJ = 2_000;
 
 export type CambioDeSesion = 'ninguno' | 'cerrada' | 'otroUsuario' | 'actualizada';
 
@@ -19,6 +20,7 @@ export class AuthService {
   private readonly tokenActual = signal<string | null>(leer(CLAVE_TOKEN));
   private readonly usuarioActual = signal<Usuario | null>(null);
   private readonly verificadaActual = signal(false);
+  private readonly desfaseDelReloj = signal(0);
   private ultimaValidacion = 0;
 
   readonly token = this.tokenActual.asReadonly();
@@ -28,6 +30,18 @@ export class AuthService {
 
   constructor() {
     borrar(CLAVE_USUARIO_ANTERIOR);
+  }
+
+  ahora(): number {
+    return Date.now() + this.desfaseDelReloj();
+  }
+
+  registrarHoraDelServidor(hora: number) {
+    if (Number.isNaN(hora)) return;
+    const desfase = hora - Date.now();
+    if (Math.abs(desfase - this.desfaseDelReloj()) > MARGEN_DEL_RELOJ) {
+      this.desfaseDelReloj.set(desfase);
+    }
   }
 
   registro(datos: FormData): Observable<Sesion> {
@@ -56,9 +70,12 @@ export class AuthService {
   }
 
   refrescar(): Observable<{ token: string }> {
-    return this.http
-      .post<{ token: string }>(`${this.url}/refrescar`, null)
-      .pipe(tap(({ token }) => this.guardarToken(token)));
+    const inicial = this.tokenActual();
+    return this.http.post<{ token: string }>(`${this.url}/refrescar`, null).pipe(
+      tap(({ token }) => {
+        if (inicial !== null && this.tokenActual() === inicial) this.guardarToken(token);
+      }),
+    );
   }
 
   editarPerfil(datos: FormData): Observable<Usuario> {
