@@ -6,7 +6,7 @@ import { usuarioDelToken } from './jwt';
 import { Sesion, Usuario } from './usuario';
 
 const CLAVE_TOKEN = 'token';
-const CLAVE_USUARIO = 'usuario';
+const CLAVE_USUARIO_ANTERIOR = 'usuario';
 const VALIDEZ_DE_LOS_DATOS = 10_000;
 
 export type CambioDeSesion = 'ninguno' | 'cerrada' | 'otroUsuario' | 'actualizada';
@@ -17,7 +17,7 @@ export class AuthService {
   private readonly url = `${environment.apiUrl}/auth`;
 
   private readonly tokenActual = signal<string | null>(leer(CLAVE_TOKEN));
-  private readonly usuarioActual = signal<Usuario | null>(leerUsuarioGuardado());
+  private readonly usuarioActual = signal<Usuario | null>(null);
   private readonly verificadaActual = signal(false);
   private ultimaValidacion = 0;
 
@@ -25,6 +25,10 @@ export class AuthService {
   readonly usuario = this.usuarioActual.asReadonly();
   readonly verificada = this.verificadaActual.asReadonly();
   readonly logueado = computed(() => this.usuarioActual() !== null);
+
+  constructor() {
+    borrar(CLAVE_USUARIO_ANTERIOR);
+  }
 
   registro(datos: FormData): Observable<Sesion> {
     return this.http.post<Sesion>(`${this.url}/registro`, datos).pipe(tap((s) => this.guardar(s)));
@@ -64,18 +68,19 @@ export class AuthService {
   }
 
   sincronizar(clave: string | null): CambioDeSesion {
-    if (clave !== null && clave !== CLAVE_TOKEN && clave !== CLAVE_USUARIO) return 'ninguno';
+    if (clave !== null && clave !== CLAVE_TOKEN) return 'ninguno';
     const anterior = this.tokenActual();
     const token = leer(CLAVE_TOKEN);
     this.tokenActual.set(token);
-    this.usuarioActual.set(token ? leerUsuarioGuardado() : null);
 
     if (!token) {
+      this.usuarioActual.set(null);
       this.verificadaActual.set(false);
       return anterior ? 'cerrada' : 'ninguno';
     }
     const mismoUsuario = anterior !== null && usuarioDelToken(anterior) === usuarioDelToken(token);
     if (!mismoUsuario) {
+      this.usuarioActual.set(null);
       this.verificadaActual.set(false);
       return 'otroUsuario';
     }
@@ -83,8 +88,7 @@ export class AuthService {
   }
 
   cerrarSesion() {
-    localStorage.removeItem(CLAVE_TOKEN);
-    localStorage.removeItem(CLAVE_USUARIO);
+    borrar(CLAVE_TOKEN);
     this.tokenActual.set(null);
     this.usuarioActual.set(null);
     this.verificadaActual.set(false);
@@ -104,7 +108,6 @@ export class AuthService {
   }
 
   private actualizarUsuario(usuario: Usuario) {
-    localStorage.setItem(CLAVE_USUARIO, JSON.stringify(usuario));
     this.usuarioActual.set(usuario);
   }
 }
@@ -117,11 +120,10 @@ function leer(clave: string): string | null {
   }
 }
 
-function leerUsuarioGuardado(): Usuario | null {
+function borrar(clave: string) {
   try {
-    const guardado = leer(CLAVE_USUARIO);
-    return guardado ? (JSON.parse(guardado) as Usuario) : null;
+    localStorage.removeItem(clave);
   } catch {
-    return null;
+    return;
   }
 }

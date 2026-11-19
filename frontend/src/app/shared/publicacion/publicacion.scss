@@ -4,6 +4,7 @@
 
 .publicacion {
   position: relative;
+  cursor: pointer;
   padding: 1.25rem;
   margin-bottom: 1rem;
 }
@@ -80,6 +81,11 @@ header button {
   max-height: 40rem;
   object-fit: contain;
 }
+.grande,
+.proyectado {
+  cursor: auto;
+}
+
 :host(:hover) .grande {
   transform: none;
   box-shadow: var(--shadow-sm);

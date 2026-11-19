@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
 import { Publicacion } from '../../core/publicacion';
@@ -20,6 +20,7 @@ export class PublicacionCard {
   private readonly auth = inject(AuthService);
   private readonly servicio = inject(PublicacionesService);
   private readonly modal = inject(ModalService);
+  private readonly router = inject(Router);
 
   readonly publicacion = input.required<Publicacion>();
   readonly grande = input(false);
@@ -33,6 +34,14 @@ export class PublicacionCard {
   protected readonly puedoEliminar = computed(
     () => this.esMia() || this.auth.usuario()?.perfil === 'administrador',
   );
+
+  protected abrir(evento: MouseEvent) {
+    if (this.grande()) return;
+    const destino = evento.target as HTMLElement | null;
+    if (destino?.closest('a, button, input, textarea, select, label, .proyectado')) return;
+    if (window.getSelection()?.toString()) return;
+    this.router.navigate(['/publicaciones', this.datos()._id]);
+  }
 
   protected alternarMeGusta() {
     const { _id, meGustaYo } = this.datos();

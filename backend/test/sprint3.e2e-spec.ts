@@ -57,14 +57,14 @@ describe('Sprint 3: sesión, publicación, comentarios y perfil (e2e)', () => {
   afterAll(() => cerrar?.());
 
   describe('token', () => {
-    it('el token de login vence a los 15 minutos y lleva id, usuario y perfil', () => {
+    it('el token de login vence a los 2 minutos y lleva id, usuario y perfil', () => {
       const payload = payloadDe(ana.token);
       expect(payload).toMatchObject({
         sub: ana.id,
         nombreUsuario: 'ana',
         perfil: 'usuario',
       });
-      expect(payload.exp - payload.iat).toBe(15 * 60);
+      expect(payload.exp - payload.iat).toBe(2 * 60);
     });
 
     it('POST /api/auth/autorizar responde 200 con los datos del usuario', async () => {
@@ -98,7 +98,7 @@ describe('Sprint 3: sesión, publicación, comentarios y perfil (e2e)', () => {
       }
     });
 
-    it('POST /api/auth/refrescar devuelve un token nuevo con el mismo payload y 15 minutos más', async () => {
+    it('POST /api/auth/refrescar devuelve un token nuevo con el mismo payload y 2 minutos más', async () => {
       const res = await api()
         .post('/api/auth/refrescar')
         .set(como(ana.token))
@@ -110,7 +110,7 @@ describe('Sprint 3: sesión, publicación, comentarios y perfil (e2e)', () => {
         nombreUsuario: anterior.nombreUsuario,
         perfil: anterior.perfil,
       });
-      expect(nuevo.exp - nuevo.iat).toBe(15 * 60);
+      expect(nuevo.exp - nuevo.iat).toBe(2 * 60);
       expect(nuevo.exp).toBeGreaterThanOrEqual(anterior.exp);
       await api()
         .post('/api/auth/autorizar')

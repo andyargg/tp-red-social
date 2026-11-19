@@ -1,5 +1,5 @@
 @let p = datos();
-<article class="card publicacion" [class.grande]="grande()">
+<article class="card publicacion" [class.grande]="grande()" (click)="abrir($event)">
   <header>
     <app-avatar
       [nombre]="p.autor.nombre + ' ' + p.autor.apellido"
@@ -70,5 +70,7 @@
     }
   </footer>
 
-  <ng-content />
+  <div class="proyectado">
+    <ng-content />
+  </div>
 </article>

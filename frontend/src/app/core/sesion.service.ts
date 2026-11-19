@@ -44,7 +44,20 @@ export class SesionService {
     const espera = Math.max(0, vence - AVISO_ANTES_DE_VENCER - Date.now());
     this.temporizadores.push(
       setTimeout(() => this.avisar(token), espera),
-      setTimeout(() => this.modal.descartar(TITULO_AVISO), vence - Date.now()),
+      setTimeout(() => this.vencer(token), vence - Date.now()),
+    );
+  }
+
+  private vencer(token: string) {
+    this.modal.descartar(TITULO_AVISO);
+    if (this.auth.token() !== token) return;
+    this.auth.cerrarSesion();
+    this.router.navigateByUrl('/login').then(() =>
+      this.modal.abrir({
+        tipo: 'info',
+        titulo: 'Tu sesión terminó',
+        mensaje: 'Tu sesión venció. Ingresá de nuevo para seguir.',
+      }),
     );
   }
 
@@ -57,7 +70,7 @@ export class SesionService {
     const extender = await this.modal.confirmar({
       tipo: 'info',
       titulo: TITULO_AVISO,
-      mensaje: 'Quedan 5 minutos de sesión. ¿Querés extenderla?',
+      mensaje: 'Queda 1 minuto de sesión. ¿Querés extenderla?',
       textoBoton: 'Extender sesión',
       textoCancelar: 'No, gracias',
     });
@@ -69,7 +82,7 @@ export class SesionService {
         this.modal.abrir({
           tipo: 'exito',
           titulo: 'Sesión extendida',
-          mensaje: 'Tu sesión dura 15 minutos más.',
+          mensaje: 'Tu sesión dura 2 minutos más.',
         }),
       error: (error) => {
         if (error instanceof HttpErrorResponse && error.status === 401) return;

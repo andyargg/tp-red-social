@@ -29,14 +29,19 @@ describe('AuthService.sincronizar (cambios desde otra pestaña)', () => {
     expect(auth.sincronizar('token')).toBe('actualizada');
     expect(auth.token()).toBe(nuevo);
     expect(auth.verificada()).toBe(true);
+    expect(auth.usuario()?._id).toBe('ana');
+  });
+
+  it('solo guarda el token en el navegador', () => {
+    expect(localStorage.getItem('token')).not.toBeNull();
+    expect(localStorage.getItem('usuario')).toBeNull();
   });
 
   it('un token de otro usuario obliga a validarlo de nuevo', () => {
     localStorage.setItem('token', token('beto'));
-    localStorage.setItem('usuario', JSON.stringify({ _id: 'beto' }));
     expect(auth.sincronizar('token')).toBe('otroUsuario');
     expect(auth.verificada()).toBe(false);
-    expect(auth.usuario()?._id).toBe('beto');
+    expect(auth.usuario()).toBeNull();
   });
 
   it('cerrar sesión en otra pestaña la cierra en esta', () => {
@@ -48,8 +53,8 @@ describe('AuthService.sincronizar (cambios desde otra pestaña)', () => {
   });
 
   it('ignora cambios de otras claves', () => {
-    localStorage.setItem('tema', 'oscuro');
-    expect(auth.sincronizar('tema')).toBe('ninguno');
+    localStorage.setItem('usuario', '{}');
+    expect(auth.sincronizar('usuario')).toBe('ninguno');
     expect(auth.verificada()).toBe(true);
   });
 });
