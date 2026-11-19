@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { mensajeDeError } from './errores';
 import { vencimiento } from './jwt';
 
-const AVISO_ANTES_DE_VENCER = 5 * 60 * 1000;
+const AVISO_ANTES_DE_VENCER = 1 * 60 * 1000;
 const TITULO_AVISO = 'Tu sesión está por vencer';
 
 @Injectable({ providedIn: 'root' })
