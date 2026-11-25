@@ -7,7 +7,6 @@ export class PluralPipe implements PipeTransform {
     singular: string,
     plural = `${singular}s`,
   ): string {
-    const n = cantidad ?? 0;
-    return `${n} ${n === 1 ? singular : plural}`;
+    return (cantidad ?? 0) === 1 ? singular : plural;
   }
 }

@@ -33,14 +33,14 @@
         autocomplete="given-name"
       />
       @if (invalido('nombre')) {
-        <p class="campo-error">Ingresá tu nombre (hasta 50 caracteres).</p>
+        <p class="campo-error">Ingresá el nombre (hasta 50 caracteres).</p>
       }
     </div>
     <div>
       <label for="apellido">Apellido</label>
       <input id="apellido" formControlName="apellido" autocomplete="family-name" />
       @if (invalido('apellido')) {
-        <p class="campo-error">Ingresá tu apellido (hasta 50 caracteres).</p>
+        <p class="campo-error">Ingresá el apellido (hasta 50 caracteres).</p>
       }
     </div>
 
@@ -51,7 +51,7 @@
         <p class="campo-error">
           {{
             form.controls.correo.errors?.['required']
-              ? 'Ingresá tu correo.'
+              ? 'Ingresá el correo.'
               : 'El correo no es válido.'
           }}
         </p>
@@ -107,7 +107,7 @@
               ? 'La fecha no puede ser futura.'
               : form.controls.fechaNacimiento.errors?.['fechaAntigua']
                 ? 'La fecha no puede ser anterior a 1900.'
-                : 'Ingresá tu fecha de nacimiento.'
+                : 'Ingresá la fecha de nacimiento.'
           }}
         </p>
       }

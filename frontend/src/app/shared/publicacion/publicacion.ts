@@ -10,6 +10,7 @@ import { Avatar } from '../avatar';
 import { ImagenRespaldoDirective } from '../directivas/imagen-respaldo.directive';
 import { NombreCompletoPipe } from '../pipes/nombre-completo.pipe';
 import { PluralPipe } from '../pipes/plural.pipe';
+import { RelojService } from '../pipes/reloj.service';
 import { TiempoRelativoPipe } from '../pipes/tiempo-relativo.pipe';
 import { Icono } from '../icono';
 import { ModalService } from '../modal/modal.service';
@@ -34,6 +35,7 @@ export class PublicacionCard {
   private readonly servicio = inject(PublicacionesService);
   private readonly modal = inject(ModalService);
   private readonly router = inject(Router);
+  protected readonly reloj = inject(RelojService);
   private readonly location = inject(Location);
 
   readonly publicacion = input.required<Publicacion>();

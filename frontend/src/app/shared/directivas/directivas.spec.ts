@@ -65,16 +65,16 @@ describe('directivas propias', () => {
     conRespaldo.dispatchEvent(new Event('error'));
     fixture.detectChanges();
     expect(conRespaldo.getAttribute('src')).toBe('respaldo.png');
-    expect(conRespaldo.hidden).toBe(false);
+    expect(conRespaldo.style.display).toBe('');
 
     sinRespaldo.dispatchEvent(new Event('error'));
     fixture.detectChanges();
-    expect(sinRespaldo.hidden).toBe(true);
+    expect(sinRespaldo.style.display).toBe('none');
     expect(fixture.componentInstance.rotas()).toBe(1);
 
     sinRespaldo.dispatchEvent(new Event('load'));
     fixture.detectChanges();
-    expect(sinRespaldo.hidden).toBe(false);
+    expect(sinRespaldo.style.display).toBe('');
   });
 
   it('appSoloAdmin muestra el contenido solo a administradores y reacciona al cambio de sesión', () => {

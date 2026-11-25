@@ -1,6 +1,6 @@
-import { Component, computed, model, signal } from '@angular/core';
+import { Component, computed, inject, model, signal } from '@angular/core';
 import { RangoFechas } from '../../../core/estadisticas.service';
-import { hoyLocal } from '../../../shared/validadores';
+import { RelojService } from '../../../shared/pipes/reloj.service';
 
 const DIA = 24 * 60 * 60 * 1000;
 const MAXIMO_DIAS = 366;
@@ -12,14 +12,22 @@ export const ATAJOS = [
   { dias: 365, texto: '1 año' },
 ] as const;
 
-export function fechaLocal(fecha: Date): string {
-  const dosDigitos = (n: number) => String(n).padStart(2, '0');
-  return `${fecha.getFullYear()}-${dosDigitos(fecha.getMonth() + 1)}-${dosDigitos(fecha.getDate())}`;
+const formatoArgentina = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Argentina/Buenos_Aires',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+export function fechaArgentina(fecha: Date): string {
+  return formatoArgentina.format(fecha);
 }
 
-export function ultimosDias(dias: number, hoy = new Date()): RangoFechas {
-  const desde = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() - (dias - 1));
-  return { desde: fechaLocal(desde), hasta: fechaLocal(hoy) };
+export function ultimosDias(dias: number, ahora = new Date()): RangoFechas {
+  const hasta = fechaArgentina(ahora);
+  const [anio, mes, dia] = hasta.split('-').map(Number);
+  const desde = new Date(Date.UTC(anio, mes - 1, dia - (dias - 1))).toISOString().slice(0, 10);
+  return { desde, hasta };
 }
 
 export function problemaDeRango({ desde, hasta }: RangoFechas): string | null {
@@ -52,7 +60,7 @@ export function problemaDeRango({ desde, hasta }: RangoFechas): string | null {
           <input
             type="date"
             [value]="borrador().desde"
-            [max]="hoy"
+            [max]="hoy()"
             (change)="cambiar('desde', $event)"
             aria-label="Desde"
           />
@@ -63,7 +71,7 @@ export function problemaDeRango({ desde, hasta }: RangoFechas): string | null {
           <input
             type="date"
             [value]="borrador().hasta"
-            [max]="hoy"
+            [max]="hoy()"
             (change)="cambiar('hasta', $event)"
             aria-label="Hasta"
           />
@@ -127,7 +135,8 @@ export class SelectorRango {
   readonly rango = model.required<RangoFechas>();
 
   protected readonly atajos = ATAJOS;
-  protected readonly hoy = hoyLocal();
+  private readonly reloj = inject(RelojService);
+  protected readonly hoy = computed(() => fechaArgentina(this.reloj.ahora()));
   protected readonly cambiado = signal<RangoFechas | null>(null);
   protected readonly borrador = computed(() => this.cambiado() ?? this.rango());
   protected readonly problema = computed(() => problemaDeRango(this.borrador()));
@@ -135,14 +144,14 @@ export class SelectorRango {
     const actual = this.borrador();
     return (
       ATAJOS.find((a) => {
-        const rango = ultimosDias(a.dias);
+        const rango = ultimosDias(a.dias, this.reloj.ahora());
         return rango.desde === actual.desde && rango.hasta === actual.hasta;
       })?.dias ?? null
     );
   });
 
   protected elegirAtajo(dias: number) {
-    this.aplicar(ultimosDias(dias));
+    this.aplicar(ultimosDias(dias, this.reloj.ahora()));
   }
 
   protected cambiar(campo: keyof RangoFechas, evento: Event) {

@@ -7,7 +7,7 @@
       <span class="meta">
         {{ '@' + p.autor.nombreUsuario }} ·
         <time [attr.datetime]="p.createdAt" [title]="p.createdAt | date: 'd MMM y, HH:mm'">{{
-          p.createdAt | tiempoRelativo
+          p.createdAt | tiempoRelativo: reloj.ahora()
         }}</time>
       </span>
     </div>
@@ -62,11 +62,13 @@
     @if (grande()) {
       <span class="meta contador">
         <app-icono nombre="comentario" [tamanio]="15" />
+        <span class="num">{{ p.cantidadComentarios }}</span>
         {{ p.cantidadComentarios | plural: 'comentario' }}
       </span>
     } @else {
       <a class="meta contador" [routerLink]="['/publicaciones', p._id]">
         <app-icono nombre="comentario" [tamanio]="15" />
+        <span class="num">{{ p.cantidadComentarios }}</span>
         {{ p.cantidadComentarios | plural: 'comentario' }}
       </a>
     }

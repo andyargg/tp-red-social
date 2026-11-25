@@ -3,13 +3,20 @@ import { problemaDeRango, ultimosDias } from './selector-rango';
 
 describe('rango de fechas de las estadísticas', () => {
   it('ultimosDias incluye el día de hoy', () => {
-    expect(ultimosDias(7, new Date(2026, 10, 25, 15))).toEqual({
+    expect(ultimosDias(7, new Date('2026-11-25T18:00:00Z'))).toEqual({
       desde: '2026-11-19',
       hasta: '2026-11-25',
     });
-    expect(ultimosDias(1, new Date(2026, 0, 1))).toEqual({
+    expect(ultimosDias(1, new Date('2026-01-01T12:00:00Z'))).toEqual({
       desde: '2026-01-01',
       hasta: '2026-01-01',
+    });
+  });
+
+  it('usa el día de Argentina aunque en UTC ya sea el día siguiente', () => {
+    expect(ultimosDias(3, new Date('2026-03-01T02:30:00Z'))).toEqual({
+      desde: '2026-02-26',
+      hasta: '2026-02-28',
     });
   });
 

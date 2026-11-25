@@ -5,7 +5,7 @@ import { Directive, input, output, signal } from '@angular/core';
   host: {
     '(error)': 'alFallar($event)',
     '(load)': 'alCargar()',
-    '[hidden]': 'oculta()',
+    '[style.display]': "oculta() ? 'none' : null",
   },
 })
 export class ImagenRespaldoDirective {

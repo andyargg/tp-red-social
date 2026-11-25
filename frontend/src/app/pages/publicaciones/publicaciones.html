@@ -37,6 +37,7 @@
       </div>
       @if (total()) {
         <span class="meta">
+          <span class="num">{{ total() }}</span>
           {{ total() | plural: 'publicación' : 'publicaciones' }}
         </span>
       }

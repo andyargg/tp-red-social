@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { AuthService } from '../../../core/auth.service';
 import { mensajeDeError } from '../../../core/errores';
@@ -30,7 +31,7 @@ export class DashboardUsuarios {
   protected readonly error = signal<string | null>(null);
   protected readonly creando = signal(false);
   protected readonly guardando = signal(false);
-  protected readonly procesando = signal<string | null>(null);
+  protected readonly procesando = signal<ReadonlySet<string>>(new Set());
   protected readonly filtro = signal<Filtro>('todos');
   protected readonly busqueda = signal('');
 
@@ -116,25 +117,35 @@ export class DashboardUsuarios {
     );
     if (!confirmado) return;
 
-    this.procesando.set(usuario._id);
+    this.marcar(usuario._id, true);
     const pedido = deshabilitar
       ? this.servicio.deshabilitar(usuario._id)
       : this.servicio.habilitar(usuario._id);
     pedido.subscribe({
       next: (actualizado) => {
-        this.procesando.set(null);
+        this.marcar(usuario._id, false);
         this.usuarios.update((lista) =>
           lista.map((u) => (u._id === actualizado._id ? actualizado : u)),
         );
       },
       error: (error) => {
-        this.procesando.set(null);
+        this.marcar(usuario._id, false);
+        if (error instanceof HttpErrorResponse && error.status === 404) this.cargar();
         this.modal.abrir({
           tipo: 'error',
           titulo: deshabilitar ? 'No se pudo deshabilitar' : 'No se pudo habilitar',
           mensaje: mensajeDeError(error),
         });
       },
+    });
+  }
+
+  private marcar(id: string, enCurso: boolean) {
+    this.procesando.update((actual) => {
+      const nuevo = new Set(actual);
+      if (enCurso) nuevo.add(id);
+      else nuevo.delete(id);
+      return nuevo;
     });
   }
 

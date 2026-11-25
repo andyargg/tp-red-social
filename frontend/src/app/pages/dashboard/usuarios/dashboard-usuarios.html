@@ -86,7 +86,7 @@
     </div>
   } @else {
     <p class="meta resumen">
-      {{ visibles().length | plural: 'usuario' }}
+      <span class="num">{{ visibles().length }}</span> {{ visibles().length | plural: 'usuario' }}
       @if (visibles().length !== usuarios().length) {
         de {{ usuarios().length }}
       }
@@ -139,7 +139,7 @@
                     type="button"
                     class="ghost-danger small"
                     (click)="cambiarEstado(u)"
-                    [disabled]="procesando() === u._id"
+                    [disabled]="procesando().has(u._id)"
                   >
                     <app-icono nombre="deshabilitar" [tamanio]="14" />Deshabilitar
                   </button>
@@ -148,7 +148,7 @@
                     type="button"
                     class="secondary small"
                     (click)="cambiarEstado(u)"
-                    [disabled]="procesando() === u._id"
+                    [disabled]="procesando().has(u._id)"
                   >
                     <app-icono nombre="habilitar" [tamanio]="14" />Habilitar
                   </button>

@@ -89,7 +89,7 @@ Las publicaciones dadas de baja y sus comentarios no se cuentan en las estadíst
 
 - **Administración** (solo administradores): `dashboard/usuarios` para listar, crear, deshabilitar y habilitar usuarios, y `dashboard/estadisticas` con un gráfico de torta, uno de líneas y uno de barras, cada uno con su propio rango de fechas.
 - **PWA:** se puede instalar desde el navegador. El service worker solo se activa en el build de producción.
-- **Pipes propios:** `tiempoRelativo` ("hace 5 min"), `plural` ("3 comentarios") y `nombreCompleto`.
+- **Pipes propios:** `tiempoRelativo` ("hace 5 min"), `plural` (elige "comentario" o "comentarios" según la cantidad) y `nombreCompleto`.
 - **Directivas propias:** `appAutofoco` (enfoca un campo al aparecer), `appImagenRespaldo` (oculta o reemplaza una imagen que no carga) y `*appSoloAdmin` (muestra algo solo a administradores).
 
 ## Créditos

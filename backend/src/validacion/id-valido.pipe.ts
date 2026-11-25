@@ -7,6 +7,6 @@ export class IdValidoPipe implements PipeTransform<string, string> {
     if (!OBJECT_ID.test(valor)) {
       throw new BadRequestException('El id no es válido');
     }
-    return valor;
+    return valor.toLowerCase();
   }
 }

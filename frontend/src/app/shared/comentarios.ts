@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { AutofocoDirective } from './directivas/autofoco.directive';
 import { NombreCompletoPipe } from './pipes/nombre-completo.pipe';
+import { RelojService } from './pipes/reloj.service';
 import { TiempoRelativoPipe } from './pipes/tiempo-relativo.pipe';
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -67,7 +68,7 @@ const MAXIMO_COMENTARIO = 500;
               <strong>{{ c.autor | nombreCompleto }}</strong>
               ·
               <time [attr.datetime]="c.createdAt" [title]="c.createdAt | date: 'd MMM y, HH:mm'">{{
-                c.createdAt | tiempoRelativo
+                c.createdAt | tiempoRelativo: reloj.ahora()
               }}</time>
               @if (c.modificado) {
                 · <span class="editado">editado</span>
@@ -201,18 +202,11 @@ const MAXIMO_COMENTARIO = 500;
       background: none;
       color: var(--accent-text);
     }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
   `,
 })
 export class Comentarios implements OnInit {
   protected readonly auth = inject(AuthService);
+  protected readonly reloj = inject(RelojService);
   private readonly servicio = inject(PublicacionesService);
   private readonly modal = inject(ModalService);
   private readonly fb = inject(NonNullableFormBuilder);

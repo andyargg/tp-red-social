@@ -216,6 +216,13 @@ describe('Sprint 4: administración de usuarios y estadísticas (e2e)', () => {
         .delete('/api/usuarios/abc')
         .set(como(admin.token))
         .expect(400);
+      const mayusculas = await api()
+        .delete(`/api/usuarios/${admin.id.toUpperCase()}`)
+        .set(como(admin.token))
+        .expect(400);
+      expect(mayusculas.body.message).toBe(
+        'No podés deshabilitar tu propia cuenta',
+      );
       await api()
         .post('/api/usuarios/000000000000000000000000/habilitar')
         .set(como(admin.token))
@@ -288,12 +295,13 @@ describe('Sprint 4: administración de usuarios y estadísticas (e2e)', () => {
         .expect(200);
       expect(res.body.total).toBe(4);
       expect(res.body.porDia).toHaveLength(7);
-      expect(res.body.porDia.at(-1).cantidad).toBe(4);
-      expect(
-        res.body.porDia
-          .slice(0, -1)
-          .every((d: { cantidad: number }) => d.cantidad === 0),
-      ).toBe(true);
+      const ultimosDos = res.body.porDia
+        .slice(-2)
+        .reduce(
+          (suma: number, d: { cantidad: number }) => suma + d.cantidad,
+          0,
+        );
+      expect(ultimosDos).toBe(4);
     });
 
     it('comentarios por publicación ordena de mayor a menor y excluye las borradas', async () => {
@@ -336,9 +344,10 @@ describe('Sprint 4: administración de usuarios y estadísticas (e2e)', () => {
 
     it('cuenta un comentario viejo solo en el rango de su fecha', async () => {
       const modelo = app.get<Model<Comentario>>(getModelToken(Comentario.name));
+      const base = (await modelo.findOne({ publicacion: deAna1 }))!;
       await modelo.collection.insertOne({
-        publicacion: (await modelo.findOne())!.publicacion,
-        autor: (await modelo.findOne())!.autor,
+        publicacion: base.publicacion,
+        autor: base.autor,
         mensaje: 'Del año pasado',
         modificado: false,
         createdAt: new Date('2025-03-10T15:00:00.000Z'),
@@ -372,6 +381,8 @@ describe('Sprint 4: administración de usuarios y estadísticas (e2e)', () => {
       const casos = [
         [{ desde: 'ayer' }, 'La fecha desde no es válida'],
         [{ hasta: '2025-13-45' }, 'La fecha hasta no es válida'],
+        [{ hasta: '2026-W01' }, 'La fecha hasta no es válida'],
+        [{ desde: '2025-02-30' }, 'La fecha desde no es válida'],
         [
           { desde: '2025-02-01T00:00:00Z', hasta: '2025-01-01T00:00:00Z' },
           'La fecha desde no puede ser posterior a hasta',

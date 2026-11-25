@@ -113,6 +113,12 @@ function rango({ desde, hasta }: RangoFechasDto): Rango {
   const inicio = desde
     ? aFecha(desde, false)
     : new Date(fin.getTime() - RANGO_POR_DEFECTO);
+  if (Number.isNaN(fin.getTime())) {
+    throw new BadRequestException('La fecha hasta no es válida');
+  }
+  if (Number.isNaN(inicio.getTime())) {
+    throw new BadRequestException('La fecha desde no es válida');
+  }
   if (inicio > fin) {
     throw new BadRequestException(
       'La fecha desde no puede ser posterior a hasta',

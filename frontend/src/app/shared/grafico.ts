@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   input,
+  signal,
   viewChild,
 } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
@@ -59,6 +60,7 @@ function acortar(texto: string) {
 
 @Component({
   selector: 'app-grafico',
+  host: { '(window:resize)': 'alRedimensionar()' },
   template: `<div class="lienzo" [style.height]="alto() || altoPorDefecto()">
     <canvas #lienzo role="img" [attr.aria-label]="descripcion()"></canvas>
   </div>`,
@@ -81,8 +83,10 @@ export class Grafico {
 
   private readonly lienzo = viewChild.required<ElementRef<HTMLCanvasElement>>('lienzo');
   private grafico: Chart | null = null;
+  private readonly ancho = signal(typeof window === 'undefined' ? 1024 : window.innerWidth);
+  private readonly angosto = computed(() => this.ancho() < 640);
   protected readonly altoPorDefecto = computed(() =>
-    this.tipo() !== 'torta' ? '18rem' : window.innerWidth < 640 ? '24rem' : '16rem',
+    this.tipo() !== 'torta' ? '18rem' : this.angosto() ? '24rem' : '16rem',
   );
 
   private readonly configuracion = computed((): ChartConfiguration => {
@@ -92,7 +96,7 @@ export class Grafico {
     const fuente = { family: 'Inter, ui-sans-serif, system-ui, sans-serif', size: 12 };
 
     if (tipo === 'torta') {
-      const angosto = typeof window !== 'undefined' && window.innerWidth < 640;
+      const angosto = this.angosto();
       const porciones = agruparPorciones(etiquetas, valores);
       const torta: ChartConfiguration<'doughnut'> = {
         type: 'doughnut',
@@ -186,6 +190,10 @@ export class Grafico {
       },
     };
   });
+
+  protected alRedimensionar() {
+    this.ancho.set(window.innerWidth);
+  }
 
   constructor() {
     afterNextRender(() => {

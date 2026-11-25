@@ -13,7 +13,9 @@ export class AutofocoDirective implements AfterViewInit {
   readonly appAutofoco = input(true, { transform: booleanAttribute });
 
   ngAfterViewInit() {
-    if (!this.appAutofoco()) return;
+    const tactil =
+      typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches;
+    if (!this.appAutofoco() || tactil) return;
     const elemento = this.elemento.nativeElement;
     queueMicrotask(() => {
       elemento.focus();

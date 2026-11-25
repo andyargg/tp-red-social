@@ -10,7 +10,9 @@
         <h2>Publicaciones por usuario</h2>
         @if (publicaciones.hasValue()) {
           <p class="meta">
+            <span class="num">{{ totalPublicaciones() }}</span>
             {{ totalPublicaciones() | plural: 'publicación' : 'publicaciones' }} de
+            <span class="num">{{ filasPublicaciones().length }}</span>
             {{ filasPublicaciones().length | plural: 'usuario' }}
           </p>
         }
@@ -61,9 +63,10 @@
     <header>
       <div>
         <h2>Comentarios en el tiempo</h2>
-        @if (comentarios.value(); as datos) {
+        @if (comentarios.hasValue()) {
+          @let datos = comentarios.value();
           <p class="meta">
-            {{ datos.total | plural: 'comentario' }}
+            <span class="num">{{ datos.total }}</span> {{ datos.total | plural: 'comentario' }}
             @if (datos.total) {
               · máximo {{ maximoPorDia() }} en un día
             }
@@ -116,6 +119,7 @@
         <h2>Comentarios por publicación</h2>
         @if (porPublicacion.hasValue()) {
           <p class="meta">
+            <span class="num">{{ filasPorPublicacion().length }}</span>
             {{ filasPorPublicacion().length | plural: 'publicación' : 'publicaciones' }} con
             comentarios
           </p>

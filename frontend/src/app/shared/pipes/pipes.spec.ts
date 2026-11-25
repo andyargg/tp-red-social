@@ -24,12 +24,19 @@ describe('TiempoRelativoPipe', () => {
     expect(pipe.transform(hace(5 * 60_000), ahora)).toBe('hace 5 min');
     expect(pipe.transform(hace(3 * 3_600_000), ahora)).toBe('hace 3 h');
     expect(pipe.transform(hace(30 * 3_600_000), ahora)).toBe('ayer');
+    expect(pipe.transform(new Date(2026, 10, 23, 23, 0), ahora)).toBe('hace 2 días');
+    expect(pipe.transform(new Date(2026, 10, 24, 23, 30), ahora)).toBe('hace 12 h');
     expect(pipe.transform(hace(4 * 86_400_000), ahora)).toBe('hace 4 días');
   });
 
   it('después de una semana muestra la fecha, con el año si no es el actual', () => {
     expect(pipe.transform(new Date(2026, 9, 3, 10), ahora)).toMatch(/^3 oct/);
     expect(pipe.transform(new Date(2025, 2, 10, 10), ahora)).toMatch(/^10 mar.* 2025$/);
+  });
+
+  it('una fecha muy en el futuro se muestra como fecha y no como recién', () => {
+    expect(pipe.transform(new Date(2026, 10, 27, 12), ahora)).toMatch(/^27 nov/);
+    expect(pipe.transform(new Date(ahora.getTime() + 20_000), ahora)).toBe('recién');
   });
 
   it('devuelve vacío para valores nulos o inválidos', () => {
@@ -41,15 +48,15 @@ describe('TiempoRelativoPipe', () => {
 describe('PluralPipe', () => {
   const pipe = new PluralPipe();
 
-  it('usa singular solo para uno', () => {
-    expect(pipe.transform(1, 'comentario')).toBe('1 comentario');
-    expect(pipe.transform(0, 'comentario')).toBe('0 comentarios');
-    expect(pipe.transform(7, 'comentario')).toBe('7 comentarios');
+  it('elige la forma singular solo para uno', () => {
+    expect(pipe.transform(1, 'comentario')).toBe('comentario');
+    expect(pipe.transform(0, 'comentario')).toBe('comentarios');
+    expect(pipe.transform(7, 'comentario')).toBe('comentarios');
   });
 
   it('acepta un plural irregular y trata null como cero', () => {
-    expect(pipe.transform(2, 'publicación', 'publicaciones')).toBe('2 publicaciones');
-    expect(pipe.transform(null, 'usuario')).toBe('0 usuarios');
+    expect(pipe.transform(2, 'publicación', 'publicaciones')).toBe('publicaciones');
+    expect(pipe.transform(null, 'usuario')).toBe('usuarios');
   });
 });
 
