@@ -1,0 +1,166 @@
+<section class="dashboard">
+  <header class="page-header">
+    <h1>Estadísticas</h1>
+    <p>Actividad de la comunidad. Cada gráfico tiene su propio rango de fechas.</p>
+  </header>
+
+  <article class="card grafico">
+    <header>
+      <div>
+        <h2>Publicaciones por usuario</h2>
+        @if (publicaciones.hasValue()) {
+          <p class="meta">
+            {{ totalPublicaciones() | plural: 'publicación' : 'publicaciones' }} de
+            {{ filasPublicaciones().length | plural: 'usuario' }}
+          </p>
+        }
+      </div>
+      <app-selector-rango [(rango)]="rangoPublicaciones" />
+    </header>
+
+    @if (publicaciones.error(); as error) {
+      <p class="error">{{ mensaje(error) }}</p>
+    } @else if (publicaciones.isLoading() && !publicaciones.hasValue()) {
+      <p class="meta estado">Cargando…</p>
+    } @else if (!filasPublicaciones().length) {
+      <p class="meta estado">No hubo publicaciones en este rango.</p>
+    } @else {
+      <app-grafico
+        tipo="torta"
+        nombreSerie="Publicaciones"
+        [etiquetas]="etiquetasPublicaciones()"
+        [valores]="valoresPublicaciones()"
+        descripcion="Gráfico de torta con la cantidad de publicaciones de cada usuario"
+        [class.actualizando]="publicaciones.isLoading()"
+      />
+      <details>
+        <summary>Ver tabla</summary>
+        <div class="tabla-datos">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Usuario</th>
+                <th scope="col" class="numero">Publicaciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filasPublicaciones(); track fila.etiqueta) {
+                <tr>
+                  <td>{{ fila.etiqueta }}</td>
+                  <td class="numero num">{{ fila.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    }
+  </article>
+
+  <article class="card grafico">
+    <header>
+      <div>
+        <h2>Comentarios en el tiempo</h2>
+        @if (comentarios.value(); as datos) {
+          <p class="meta">
+            {{ datos.total | plural: 'comentario' }}
+            @if (datos.total) {
+              · máximo {{ maximoPorDia() }} en un día
+            }
+          </p>
+        }
+      </div>
+      <app-selector-rango [(rango)]="rangoComentarios" />
+    </header>
+
+    @if (comentarios.error(); as error) {
+      <p class="error">{{ mensaje(error) }}</p>
+    } @else if (comentarios.isLoading() && !comentarios.hasValue()) {
+      <p class="meta estado">Cargando…</p>
+    } @else {
+      <app-grafico
+        tipo="linea"
+        nombreSerie="Comentarios"
+        [etiquetas]="etiquetasComentarios()"
+        [valores]="valoresComentarios()"
+        descripcion="Gráfico de líneas con la cantidad de comentarios por día"
+        [class.actualizando]="comentarios.isLoading()"
+      />
+      <details>
+        <summary>Ver tabla</summary>
+        <div class="tabla-datos">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Día</th>
+                <th scope="col" class="numero">Comentarios</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filasComentarios(); track $index) {
+                <tr>
+                  <td>{{ fila.etiqueta }}</td>
+                  <td class="numero num">{{ fila.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    }
+  </article>
+
+  <article class="card grafico">
+    <header>
+      <div>
+        <h2>Comentarios por publicación</h2>
+        @if (porPublicacion.hasValue()) {
+          <p class="meta">
+            {{ filasPorPublicacion().length | plural: 'publicación' : 'publicaciones' }} con
+            comentarios
+          </p>
+        }
+      </div>
+      <app-selector-rango [(rango)]="rangoPorPublicacion" />
+    </header>
+
+    @if (porPublicacion.error(); as error) {
+      <p class="error">{{ mensaje(error) }}</p>
+    } @else if (porPublicacion.isLoading() && !porPublicacion.hasValue()) {
+      <p class="meta estado">Cargando…</p>
+    } @else if (!filasPorPublicacion().length) {
+      <p class="meta estado">No hubo comentarios en este rango.</p>
+    } @else {
+      <app-grafico
+        tipo="barras"
+        nombreSerie="Comentarios"
+        [etiquetas]="etiquetasPorPublicacion()"
+        [valores]="valoresPorPublicacion()"
+        descripcion="Gráfico de barras con la cantidad de comentarios de cada publicación"
+        [alto]="alturaBarras()"
+        [class.actualizando]="porPublicacion.isLoading()"
+      />
+      <details>
+        <summary>Ver tabla</summary>
+        <div class="tabla-datos">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Publicación</th>
+                <th scope="col" class="numero">Comentarios</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filasPorPublicacion(); track $index) {
+                <tr>
+                  <td>{{ fila.etiqueta }}</td>
+                  <td class="numero num">{{ fila.cantidad }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </details>
+    }
+  </article>
+</section>

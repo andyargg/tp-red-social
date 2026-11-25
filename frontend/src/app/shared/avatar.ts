@@ -1,12 +1,18 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, linkedSignal } from '@angular/core';
+import { ImagenRespaldoDirective } from './directivas/imagen-respaldo.directive';
 import { Icono } from './icono';
 
 @Component({
   selector: 'app-avatar',
-  imports: [Icono],
+  imports: [Icono, ImagenRespaldoDirective],
   template: `
-    @if (imagen(); as src) {
-      <img [src]="src" [alt]="'Foto de perfil de ' + nombre()" />
+    @if (imagenVisible(); as src) {
+      <img
+        appImagenRespaldo
+        [src]="src"
+        [alt]="'Foto de perfil de ' + nombre()"
+        (imagenRota)="imagenVisible.set(null)"
+      />
     } @else if (iniciales()) {
       <span aria-hidden="true">{{ iniciales() }}</span>
     } @else {
@@ -54,6 +60,8 @@ export class Avatar {
   readonly nombre = input.required<string>();
   readonly imagen = input<string | null>(null);
   readonly tamanio = input<'sm' | 'md' | 'lg'>('md');
+
+  protected readonly imagenVisible = linkedSignal(() => this.imagen());
 
   protected readonly iniciales = computed(() =>
     this.nombre()

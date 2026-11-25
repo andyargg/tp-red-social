@@ -1,16 +1,14 @@
 @let p = datos();
 <article class="card publicacion" [class.grande]="grande()" (click)="abrir($event)">
   <header>
-    <app-avatar
-      [nombre]="p.autor.nombre + ' ' + p.autor.apellido"
-      [imagen]="p.autor.imagenPerfil"
-      tamanio="sm"
-    />
+    <app-avatar [nombre]="p.autor | nombreCompleto" [imagen]="p.autor.imagenPerfil" tamanio="sm" />
     <div class="autor">
-      <strong>{{ p.autor.nombre }} {{ p.autor.apellido }}</strong>
+      <strong>{{ p.autor | nombreCompleto }}</strong>
       <span class="meta">
         {{ '@' + p.autor.nombreUsuario }} ·
-        <time [attr.datetime]="p.createdAt">{{ p.createdAt | date: 'd MMM y, HH:mm' }}</time>
+        <time [attr.datetime]="p.createdAt" [title]="p.createdAt | date: 'd MMM y, HH:mm'">{{
+          p.createdAt | tiempoRelativo
+        }}</time>
       </span>
     </div>
     @if (puedoEliminar()) {
@@ -36,7 +34,13 @@
   }
   <p class="mensaje">{{ p.mensaje }}</p>
   @if (p.imagen) {
-    <img class="imagen" [src]="p.imagen" [alt]="'Imagen de ' + p.titulo" loading="lazy" />
+    <img
+      class="imagen"
+      appImagenRespaldo
+      [src]="p.imagen"
+      [alt]="'Imagen de ' + p.titulo"
+      loading="lazy"
+    />
   }
 
   <footer>
@@ -58,14 +62,12 @@
     @if (grande()) {
       <span class="meta contador">
         <app-icono nombre="comentario" [tamanio]="15" />
-        <span class="num">{{ p.cantidadComentarios }}</span>
-        {{ p.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+        {{ p.cantidadComentarios | plural: 'comentario' }}
       </span>
     } @else {
       <a class="meta contador" [routerLink]="['/publicaciones', p._id]">
         <app-icono nombre="comentario" [tamanio]="15" />
-        <span class="num">{{ p.cantidadComentarios }}</span>
-        {{ p.cantidadComentarios === 1 ? 'comentario' : 'comentarios' }}
+        {{ p.cantidadComentarios | plural: 'comentario' }}
       </a>
     }
   </footer>

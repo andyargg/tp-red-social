@@ -8,7 +8,7 @@
 
     <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
       <label for="usuario">Correo o nombre de usuario</label>
-      <input id="usuario" formControlName="usuario" autocomplete="username" />
+      <input id="usuario" appAutofoco formControlName="usuario" autocomplete="username" />
       @if (form.controls.usuario.touched && form.controls.usuario.errors) {
         <p class="campo-error">Ingresá tu correo o nombre de usuario.</p>
       }

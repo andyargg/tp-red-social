@@ -3,13 +3,14 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { mensajeDeError } from '../../core/errores';
+import { AutofocoDirective } from '../../shared/directivas/autofoco.directive';
 import { Icono } from '../../shared/icono';
 import { ModalService } from '../../shared/modal/modal.service';
 import { PASSWORD_REGEX, obligatorio } from '../../shared/validadores';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, Icono],
+  imports: [ReactiveFormsModule, RouterLink, Icono, AutofocoDirective],
   templateUrl: './login.html',
   styleUrl: '../auth.scss',
 })

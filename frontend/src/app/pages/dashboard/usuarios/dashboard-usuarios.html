@@ -1,0 +1,169 @@
+<section class="dashboard">
+  <header class="page-header encabezado">
+    <div>
+      <h1>Usuarios</h1>
+      <p>Creá cuentas y habilitá o deshabilitá el acceso a Socialito.</p>
+    </div>
+    @if (!creando()) {
+      <button type="button" (click)="creando.set(true)">
+        <app-icono nombre="agregarUsuario" />Nuevo usuario
+      </button>
+    }
+  </header>
+
+  @if (creando()) {
+    <div class="card nuevo">
+      <div class="titulo-nuevo">
+        <h2>Nuevo usuario</h2>
+        <button
+          type="button"
+          class="secondary small"
+          (click)="creando.set(false)"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
+      </div>
+      <app-formulario-usuario
+        conPerfil
+        autofoco
+        textoBoton="Crear usuario"
+        textoEnviando="Creando usuario…"
+        icono="agregarUsuario"
+        [enviando]="guardando()"
+        (enviado)="crear($event)"
+      />
+    </div>
+  }
+
+  <div class="barra">
+    <div class="segmentos" role="group" aria-label="Filtrar usuarios">
+      <button
+        type="button"
+        [class.activo]="filtro() === 'todos'"
+        [attr.aria-pressed]="filtro() === 'todos'"
+        (click)="filtro.set('todos')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        [class.activo]="filtro() === 'activos'"
+        [attr.aria-pressed]="filtro() === 'activos'"
+        (click)="filtro.set('activos')"
+      >
+        Habilitados
+      </button>
+      <button
+        type="button"
+        [class.activo]="filtro() === 'deshabilitados'"
+        [attr.aria-pressed]="filtro() === 'deshabilitados'"
+        (click)="filtro.set('deshabilitados')"
+      >
+        Deshabilitados
+        @if (cantidadDeshabilitados()) {
+          <span class="num">({{ cantidadDeshabilitados() }})</span>
+        }
+      </button>
+    </div>
+    <label class="sr-only" for="buscarUsuario">Buscar usuario</label>
+    <input
+      id="buscarUsuario"
+      class="buscar"
+      type="search"
+      placeholder="Buscar por nombre, usuario o correo"
+      [value]="busqueda()"
+      (input)="buscar($event)"
+    />
+  </div>
+
+  @if (cargando()) {
+    <p class="meta">Cargando usuarios…</p>
+  } @else if (error(); as mensaje) {
+    <div class="card vacio">
+      <p class="error">{{ mensaje }}</p>
+      <button type="button" class="secondary small" (click)="cargar()">Reintentar</button>
+    </div>
+  } @else {
+    <p class="meta resumen">
+      {{ visibles().length | plural: 'usuario' }}
+      @if (visibles().length !== usuarios().length) {
+        de {{ usuarios().length }}
+      }
+    </p>
+    <div class="card tabla">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Usuario</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Perfil</th>
+            <th scope="col">Alta</th>
+            <th scope="col">Estado</th>
+            <th scope="col"><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of visibles(); track u._id) {
+            <tr [class.inactivo]="!u.activo">
+              <td>
+                <div class="quien">
+                  <app-avatar
+                    [nombre]="u | nombreCompleto"
+                    [imagen]="u.imagenPerfil"
+                    tamanio="sm"
+                  />
+                  <span>
+                    <strong>{{ u | nombreCompleto }}</strong>
+                    <small>{{ '@' + u.nombreUsuario }}</small>
+                  </span>
+                </div>
+              </td>
+              <td class="correo">{{ u.correo }}</td>
+              <td>
+                <span class="badge" [class.badge-pending]="u.perfil === 'administrador'">
+                  {{ u.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
+                </span>
+              </td>
+              <td class="meta fecha">{{ u.createdAt | date: 'd MMM y' }}</td>
+              <td>
+                <span class="badge" [class.badge-ok]="u.activo" [class.badge-danger]="!u.activo">
+                  {{ u.activo ? 'Habilitado' : 'Deshabilitado' }}
+                </span>
+              </td>
+              <td class="accion">
+                @if (u._id === auth.usuario()?._id) {
+                  <span class="meta">Vos</span>
+                } @else if (u.activo) {
+                  <button
+                    type="button"
+                    class="ghost-danger small"
+                    (click)="cambiarEstado(u)"
+                    [disabled]="procesando() === u._id"
+                  >
+                    <app-icono nombre="deshabilitar" [tamanio]="14" />Deshabilitar
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="secondary small"
+                    (click)="cambiarEstado(u)"
+                    [disabled]="procesando() === u._id"
+                  >
+                    <app-icono nombre="habilitar" [tamanio]="14" />Habilitar
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="meta sin-resultados">
+                Ningún usuario coincide con la búsqueda.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -6,6 +6,7 @@ import { mensajeDeError } from '../../core/errores';
 import { Publicacion } from '../../core/publicacion';
 import { PublicacionesService } from '../../core/publicaciones.service';
 import { Avatar } from '../../shared/avatar';
+import { NombreCompletoPipe } from '../../shared/pipes/nombre-completo.pipe';
 import { Comentarios } from '../../shared/comentarios';
 import { Icono } from '../../shared/icono';
 import { PublicacionCard } from '../../shared/publicacion/publicacion';
@@ -13,7 +14,16 @@ import { EditarPerfil } from './editar-perfil';
 
 @Component({
   selector: 'app-mi-perfil',
-  imports: [RouterLink, DatePipe, Avatar, Icono, PublicacionCard, Comentarios, EditarPerfil],
+  imports: [
+    RouterLink,
+    DatePipe,
+    Avatar,
+    Icono,
+    PublicacionCard,
+    Comentarios,
+    EditarPerfil,
+    NombreCompletoPipe,
+  ],
   templateUrl: './mi-perfil.html',
   styleUrls: ['../vacio.scss', './mi-perfil.scss'],
 })

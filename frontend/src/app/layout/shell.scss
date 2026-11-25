@@ -43,6 +43,15 @@ nav a {
   color: var(--text-secondary);
   text-decoration: none;
 }
+.seccion {
+  margin: 1rem 0 0.25rem;
+  padding: 0 0.75rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
 nav a:hover {
   color: var(--text-primary);
   background: var(--bg-subtle);
@@ -138,6 +147,15 @@ nav a.activo::before {
   nav {
     grid-column: 1 / -1;
     flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav a {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .seccion {
+    display: none;
   }
   nav a.activo::before {
     display: none;

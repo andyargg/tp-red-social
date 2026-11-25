@@ -1,0 +1,78 @@
+.foto {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.foto p {
+  margin-top: 0.5rem;
+}
+.elegir {
+  display: inline-flex;
+  margin: 0;
+  cursor: pointer;
+}
+input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+textarea {
+  resize: vertical;
+}
+.campo-error {
+  margin: 0.25rem 0 0;
+  font-size: 14px;
+  color: var(--danger);
+}
+.ayuda {
+  margin: 0.25rem 0 0;
+  font-size: 14px;
+}
+.contador {
+  text-align: right;
+}
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1rem;
+}
+.perfil {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.perfil legend {
+  padding: 0 0.35rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-header);
+}
+.opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  cursor: pointer;
+}
+.opcion input {
+  width: auto;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.enviar {
+  width: 100%;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+@media (max-width: 600px) {
+  .grilla {
+    grid-template-columns: 1fr;
+  }
+}

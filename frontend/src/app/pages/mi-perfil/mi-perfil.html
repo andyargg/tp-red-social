@@ -9,13 +9,13 @@
     } @else {
       <div class="card hero">
         <app-avatar
-          [nombre]="usuario.nombre + ' ' + usuario.apellido"
+          [nombre]="usuario | nombreCompleto"
           [imagen]="usuario.imagenPerfil"
           tamanio="lg"
         />
         <div class="identidad">
           <div class="nombre">
-            <h2>{{ usuario.nombre }} {{ usuario.apellido }}</h2>
+            <h2>{{ usuario | nombreCompleto }}</h2>
             <span class="badge" [class.badge-ok]="usuario.perfil === 'administrador'">
               {{ usuario.perfil === 'administrador' ? 'Administrador' : 'Usuario' }}
             </span>

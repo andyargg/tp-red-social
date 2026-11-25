@@ -8,6 +8,12 @@ export const sesionGuard: CanActivateFn = (_ruta, estado) => {
   return inject(Router).createUrlTree(['/cargando'], { queryParams: { destino: estado.url } });
 };
 
+export const adminGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  if (auth.usuario()?.perfil === 'administrador') return true;
+  return inject(Router).createUrlTree(['/publicaciones']);
+};
+
 export const invitadoGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);

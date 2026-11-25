@@ -28,6 +28,14 @@ export class AuthService {
     imagen?: Express.Multer.File,
     perfil: Perfil = 'usuario',
   ) {
+    return this.sesion(await this.crearUsuario(dto, imagen, perfil));
+  }
+
+  async crearUsuario(
+    dto: RegistroDto,
+    imagen: Express.Multer.File | undefined,
+    perfil: Perfil,
+  ) {
     if (await this.usuarios.existeCorreo(dto.correo)) {
       throw new ConflictException('Ya existe una cuenta con ese correo');
     }
@@ -39,7 +47,7 @@ export class AuthService {
       ? await this.imagenes.subir(imagen, 'perfiles')
       : null;
 
-    const usuario = await this.usuarios
+    return this.usuarios
       .crear({
         nombre: dto.nombre,
         apellido: dto.apellido,
@@ -55,7 +63,6 @@ export class AuthService {
         await this.imagenes.eliminar(imagenPerfil);
         return duplicadoComoConflicto(error);
       });
-    return this.sesion(usuario);
   }
 
   async login(dto: LoginDto) {

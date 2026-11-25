@@ -1,0 +1,72 @@
+.dashboard {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+.grafico > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.grafico h2 {
+  margin: 0 0 0.25rem;
+}
+.grafico header .meta {
+  margin: 0;
+}
+.grafico:hover {
+  transform: none;
+}
+.estado {
+  padding: 2.5rem 0;
+  text-align: center;
+}
+app-grafico {
+  transition: opacity 150ms;
+}
+app-grafico.actualizando {
+  opacity: 0.5;
+}
+details {
+  margin-top: 1rem;
+  font-size: 14px;
+}
+summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+summary:hover {
+  color: var(--text-primary);
+}
+.tabla-datos {
+  max-height: 20rem;
+  margin-top: 0.75rem;
+  overflow-y: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+}
+th,
+td {
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--hairline);
+}
+th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.numero {
+  text-align: right;
+}

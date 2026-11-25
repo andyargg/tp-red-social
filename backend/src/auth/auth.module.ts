@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ImagenesModule } from '../imagenes/imagenes.module.js';
 import { UsuariosDatosModule } from '../usuarios/usuarios-datos.module.js';
 import { AuthController } from './auth.controller.js';
+import { AdminGuard } from './admin.guard.js';
 import { AuthService } from './auth.service.js';
 import { JwtGuard } from './jwt.guard.js';
 
@@ -20,7 +21,7 @@ import { JwtGuard } from './jwt.guard.js';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtGuard],
-  exports: [JwtModule, JwtGuard, UsuariosDatosModule],
+  providers: [AuthService, JwtGuard, AdminGuard],
+  exports: [JwtModule, JwtGuard, AdminGuard, AuthService, UsuariosDatosModule],
 })
 export class AuthModule {}

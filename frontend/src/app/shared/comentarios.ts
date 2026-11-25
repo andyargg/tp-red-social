@@ -1,4 +1,7 @@
 import { DatePipe } from '@angular/common';
+import { AutofocoDirective } from './directivas/autofoco.directive';
+import { NombreCompletoPipe } from './pipes/nombre-completo.pipe';
+import { TiempoRelativoPipe } from './pipes/tiempo-relativo.pipe';
 import { Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../core/auth.service';
@@ -14,7 +17,15 @@ const MAXIMO_COMENTARIO = 500;
 
 @Component({
   selector: 'app-comentarios',
-  imports: [DatePipe, ReactiveFormsModule, Avatar, Icono],
+  imports: [
+    DatePipe,
+    ReactiveFormsModule,
+    Avatar,
+    Icono,
+    AutofocoDirective,
+    NombreCompletoPipe,
+    TiempoRelativoPipe,
+  ],
   template: `
     @if (escribir()) {
       <form class="nuevo" [formGroup]="form" (ngSubmit)="comentar()" novalidate>
@@ -47,14 +58,17 @@ const MAXIMO_COMENTARIO = 500;
       @for (c of comentarios(); track c._id) {
         <div class="comentario">
           <app-avatar
-            [nombre]="c.autor.nombre + ' ' + c.autor.apellido"
+            [nombre]="c.autor | nombreCompleto"
             [imagen]="c.autor.imagenPerfil"
             tamanio="sm"
           />
           <div class="cuerpo">
             <span class="meta">
-              <strong>{{ c.autor.nombre }} {{ c.autor.apellido }}</strong>
-              · {{ c.createdAt | date: 'd MMM, HH:mm' }}
+              <strong>{{ c.autor | nombreCompleto }}</strong>
+              ·
+              <time [attr.datetime]="c.createdAt" [title]="c.createdAt | date: 'd MMM y, HH:mm'">{{
+                c.createdAt | tiempoRelativo
+              }}</time>
               @if (c.modificado) {
                 · <span class="editado">editado</span>
               }
@@ -69,6 +83,7 @@ const MAXIMO_COMENTARIO = 500;
                 <label class="sr-only" for="editar-{{ c._id }}">Editar comentario</label>
                 <textarea
                   id="editar-{{ c._id }}"
+                  appAutofoco
                   rows="2"
                   formControlName="mensaje"
                   [maxlength]="maximo"

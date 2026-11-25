@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
-import { invitadoGuard, sesionGuard } from './guards';
+import { adminGuard, invitadoGuard, sesionGuard } from './guards';
 import { vencimiento } from './jwt';
 
 function token(exp: number) {
@@ -51,6 +51,20 @@ describe('guards de sesión', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({ providers: [provideRouter([]), provideHttpClient()] });
     expect((correr(invitadoGuard) as UrlTree).toString()).toBe('/cargando');
+  });
+
+  it('el dashboard solo deja pasar a administradores', () => {
+    const ingresar = (perfil: string) => {
+      TestBed.inject(AuthService).login('ana', 'Secreta123').subscribe();
+      TestBed.inject(HttpTestingController)
+        .expectOne((req) => req.url.endsWith('/auth/login'))
+        .flush({ usuario: { _id: '1', perfil }, token: 'abc' });
+    };
+    expect((correr(adminGuard) as UrlTree).toString()).toBe('/publicaciones');
+    ingresar('usuario');
+    expect((correr(adminGuard) as UrlTree).toString()).toBe('/publicaciones');
+    ingresar('administrador');
+    expect(correr(adminGuard)).toBe(true);
   });
 });
 

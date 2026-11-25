@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { invitadoGuard, sesionGuard } from './core/guards';
+import { adminGuard, invitadoGuard, sesionGuard } from './core/guards';
 import { Shell } from './layout/shell';
 
 export const routes: Routes = [
@@ -42,6 +42,29 @@ export const routes: Routes = [
         path: 'mi-perfil',
         title: 'Mi perfil · Socialito',
         loadComponent: () => import('./pages/mi-perfil/mi-perfil').then((m) => m.MiPerfil),
+      },
+      {
+        path: 'dashboard',
+        canActivate: [adminGuard],
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'usuarios' },
+          {
+            path: 'usuarios',
+            title: 'Usuarios · Socialito',
+            loadComponent: () =>
+              import('./pages/dashboard/usuarios/dashboard-usuarios').then(
+                (m) => m.DashboardUsuarios,
+              ),
+          },
+          {
+            path: 'estadisticas',
+            title: 'Estadísticas · Socialito',
+            loadComponent: () =>
+              import('./pages/dashboard/estadisticas/dashboard-estadisticas').then(
+                (m) => m.DashboardEstadisticas,
+              ),
+          },
+        ],
       },
     ],
   },

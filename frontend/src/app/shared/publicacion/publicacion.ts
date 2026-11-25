@@ -7,12 +7,25 @@ import { mensajeDeError } from '../../core/errores';
 import { Publicacion } from '../../core/publicacion';
 import { PublicacionesService } from '../../core/publicaciones.service';
 import { Avatar } from '../avatar';
+import { ImagenRespaldoDirective } from '../directivas/imagen-respaldo.directive';
+import { NombreCompletoPipe } from '../pipes/nombre-completo.pipe';
+import { PluralPipe } from '../pipes/plural.pipe';
+import { TiempoRelativoPipe } from '../pipes/tiempo-relativo.pipe';
 import { Icono } from '../icono';
 import { ModalService } from '../modal/modal.service';
 
 @Component({
   selector: 'app-publicacion',
-  imports: [DatePipe, RouterLink, Avatar, Icono],
+  imports: [
+    DatePipe,
+    RouterLink,
+    Avatar,
+    Icono,
+    ImagenRespaldoDirective,
+    NombreCompletoPipe,
+    PluralPipe,
+    TiempoRelativoPipe,
+  ],
   templateUrl: './publicacion.html',
   styleUrl: './publicacion.scss',
 })

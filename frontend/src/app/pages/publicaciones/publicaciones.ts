@@ -4,6 +4,7 @@ import { mensajeDeError } from '../../core/errores';
 import { Orden, Publicacion } from '../../core/publicacion';
 import { PublicacionesService } from '../../core/publicaciones.service';
 import { Icono } from '../../shared/icono';
+import { PluralPipe } from '../../shared/pipes/plural.pipe';
 import { PublicacionCard } from '../../shared/publicacion/publicacion';
 import { NuevaPublicacion } from './nueva-publicacion';
 
@@ -11,7 +12,7 @@ const POR_PAGINA = 5;
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [Icono, PublicacionCard, NuevaPublicacion],
+  imports: [Icono, PublicacionCard, NuevaPublicacion, PluralPipe],
   templateUrl: './publicaciones.html',
   styleUrls: ['../vacio.scss', './publicaciones.scss'],
 })

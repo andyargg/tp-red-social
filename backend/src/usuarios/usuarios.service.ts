@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ImagenesService } from '../imagenes/imagenes.service.js';
@@ -44,6 +48,23 @@ export class UsuariosService {
       throw error;
     }
     if (fotoNueva !== fotoAnterior) await this.imagenes.eliminar(fotoAnterior);
+    return usuario;
+  }
+
+  listar() {
+    return this.usuarios.find().sort({ createdAt: -1, _id: -1 });
+  }
+
+  async cambiarEstado(id: string, activo: boolean, admin: string) {
+    if (!activo && id === admin) {
+      throw new BadRequestException('No podés deshabilitar tu propia cuenta');
+    }
+    const usuario = await this.usuarios.findByIdAndUpdate(
+      id,
+      { activo },
+      { returnDocument: 'after' },
+    );
+    if (!usuario) throw new NotFoundException('El usuario no existe');
     return usuario;
   }
 

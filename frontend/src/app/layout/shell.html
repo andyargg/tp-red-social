@@ -12,18 +12,27 @@
       <a routerLink="/mi-perfil" routerLinkActive="activo">
         <app-icono nombre="usuario" />Mi perfil
       </a>
+      <ng-container *appSoloAdmin>
+        <p class="seccion">Administración</p>
+        <a routerLink="/dashboard/usuarios" routerLinkActive="activo">
+          <app-icono nombre="usuarios" />Usuarios
+        </a>
+        <a routerLink="/dashboard/estadisticas" routerLinkActive="activo">
+          <app-icono nombre="grafico" />Estadísticas
+        </a>
+      </ng-container>
     </nav>
 
     <div class="pie">
       @if (auth.usuario(); as usuario) {
         <a class="quien" routerLink="/mi-perfil">
           <app-avatar
-            [nombre]="usuario.nombre + ' ' + usuario.apellido"
+            [nombre]="usuario | nombreCompleto"
             [imagen]="usuario.imagenPerfil"
             tamanio="sm"
           />
           <span>
-            <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong>
+            <strong>{{ usuario | nombreCompleto }}</strong>
             <small>{{ '@' + usuario.nombreUsuario }}</small>
           </span>
         </a>
