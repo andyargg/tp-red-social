@@ -104,7 +104,7 @@ export class SesionService {
         this.modal.abrir({
           tipo: 'exito',
           titulo: 'Sesión extendida',
-          mensaje: 'Tu sesión dura 2 minutos más.',
+          mensaje: 'Tu sesión dura 3 minutos más.',
         });
       },
       error: (error) => {

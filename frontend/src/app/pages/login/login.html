@@ -45,6 +45,26 @@
       </button>
     </form>
 
+    <div class="accesos">
+      <p class="titulo-accesos">Acceso rápido</p>
+      <div class="botones-accesos">
+        @for (acceso of accesos; track acceso.usuario) {
+          <button
+            type="button"
+            class="secondary"
+            (click)="accesoRapido(acceso)"
+            [disabled]="enviando()"
+          >
+            <app-icono [nombre]="acceso.rol === 'Administrador' ? 'usuarios' : 'usuario'" />
+            <span>
+              <strong>{{ acceso.rol }}</strong>
+              <small>{{ acceso.usuario }}</small>
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+
     <p class="alternativa">¿No tenés cuenta? <a routerLink="/registro">Creá una</a></p>
   </div>
 </div>

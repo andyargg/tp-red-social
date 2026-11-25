@@ -10,6 +10,16 @@ Programación IV · UTN Avellaneda · 2026 C1
 | `frontend/` | Angular 22 |
 | `backend/` | NestJS 12 + MongoDB (Mongoose) + JWT |
 
+## Usuarios de prueba
+
+En el login hay botones de **acceso rápido** para cada rol:
+
+| Rol | Usuario | Contraseña |
+|---|---|---|
+| Administrador | `admin.demo` | `Admin1234` |
+| Usuario | `lucia.prueba` | `Prueba1234` |
+| Usuario | `tomas.prueba` | `Prueba1234` |
+
 ## Cómo correrlo
 
 ### Backend
@@ -62,7 +72,7 @@ cd frontend && npx ng test --watch=false
 | POST | `/api/auth/registro` | `multipart/form-data` con nombre, apellido, correo, nombreUsuario, password, fechaNacimiento, descripcion e `imagenPerfil` (opcional) | 201, 400, 409 |
 | POST | `/api/auth/login` | `{ usuario, password }`: `usuario` acepta el correo o el nombre de usuario | 200, 400, 401, 403 |
 | POST | `/api/auth/autorizar` | Valida el token y devuelve los datos actuales del usuario | 200, 401 |
-| POST | `/api/auth/refrescar` | Con un token válido devuelve `{ token }`: el mismo payload y 2 minutos más | 200, 401 |
+| POST | `/api/auth/refrescar` | Con un token válido devuelve `{ token }`: el mismo payload y 3 minutos más | 200, 401 |
 | PATCH | `/api/usuarios/yo` | `multipart/form-data` con los campos a cambiar (nombre, apellido, fechaNacimiento, descripcion), `imagenPerfil` (opcional) o `quitarImagen=true`. El correo y el nombre de usuario no cambian | 200, 400, 401 |
 | POST | `/api/publicaciones` | `multipart/form-data` con titulo, mensaje e `imagen` (opcional) | 201, 400, 401 |
 | GET | `/api/publicaciones` | Query: `orden` (`fecha` o `meGusta`), `usuario` (id del autor), `offset`, `limit` (máx. 50). Devuelve `{ publicaciones, total, offset, limit }` | 200, 400, 401 |
@@ -81,7 +91,7 @@ cd frontend && npx ng test --watch=false
 | GET | `/api/estadisticas/comentarios` | Solo administradores. Mismo rango. Devuelve `{ desde, hasta, total, porDia: [{ fecha, cantidad }] }` con todos los días del rango (hora de Argentina) | 200, 400, 401, 403 |
 | GET | `/api/estadisticas/comentarios-por-publicacion` | Solo administradores. Mismo rango. Devuelve `{ desde, hasta, datos: [{ publicacion, cantidad }] }` | 200, 400, 401, 403 |
 
-Registro y login devuelven `{ usuario, token }`. El token es un JWT que vence a los 2 minutos. Las demás rutas (salvo registro y login) exigen el header `Authorization: Bearer <token>` de un usuario habilitado.
+Registro y login devuelven `{ usuario, token }`. El token es un JWT que vence a los 3 minutos. Un minuto antes de que venza, la app ofrece extender la sesión. Las demás rutas (salvo registro y login) exigen el header `Authorization: Bearer <token>` de un usuario habilitado.
 
 Las publicaciones dadas de baja y sus comentarios no se cuentan en las estadísticas.
 

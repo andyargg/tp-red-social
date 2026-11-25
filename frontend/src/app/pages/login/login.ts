@@ -8,6 +8,11 @@ import { Icono } from '../../shared/icono';
 import { ModalService } from '../../shared/modal/modal.service';
 import { PASSWORD_REGEX, obligatorio } from '../../shared/validadores';
 
+export const ACCESOS_RAPIDOS = [
+  { rol: 'Administrador', usuario: 'admin.demo', password: 'Admin1234' },
+  { rol: 'Usuario', usuario: 'lucia.prueba', password: 'Prueba1234' },
+] as const;
+
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink, Icono, AutofocoDirective],
@@ -21,11 +26,17 @@ export class Login {
 
   protected readonly enviando = signal(false);
   protected readonly verPassword = signal(false);
+  protected readonly accesos = ACCESOS_RAPIDOS;
 
   protected readonly form = inject(NonNullableFormBuilder).group({
     usuario: ['', [obligatorio]],
     password: ['', [Validators.required, Validators.pattern(PASSWORD_REGEX)]],
   });
+
+  protected accesoRapido(acceso: (typeof ACCESOS_RAPIDOS)[number]) {
+    this.form.setValue({ usuario: acceso.usuario, password: acceso.password });
+    this.ingresar();
+  }
 
   protected ingresar() {
     if (this.form.invalid) {

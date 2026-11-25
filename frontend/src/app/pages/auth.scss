@@ -53,6 +53,47 @@
   justify-content: center;
   margin-top: 1.5rem;
 }
+.accesos {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+.titulo-accesos {
+  margin: 0 0 0.6rem;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.botones-accesos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.botones-accesos button {
+  justify-content: flex-start;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+.botones-accesos button:hover:not(:disabled) {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+.botones-accesos span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.botones-accesos small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
 .alternativa {
   text-align: center;
   margin: 1.25rem 0 0;
